@@ -10934,3 +10934,37 @@
 [08-Sep-2016 04:01:09 America/New_York] PHP Warning:  mysqli_fetch_array() expects parameter 1 to be mysqli_result, boolean given in /NAShomes/publichtmls/mycpanel/psps/public_html/PL_includes/functions.php on line 201
 [08-Sep-2016 04:38:53 America/New_York] PHP Warning:  mysqli_fetch_array() expects parameter 1 to be mysqli_result, boolean given in /NAShomes/publichtmls/mycpanel/psps/public_html/PL_includes/functions.php on line 201
 [08-Sep-2016 16:00:54 America/New_York] PHP Warning:  mysqli_fetch_array() expects parameter 1 to be mysqli_result, boolean given in /NAShomes/publichtmls/mycpanel/psps/public_html/PL_includes/functions.php on line 201
+[08-Sep-2016 18:22:04 America/New_York] PHP Warning:  mysqli_fetch_array() expects parameter 1 to be mysqli_result, boolean given in /NAShomes/publichtmls/mycpanel/psps/public_html/PL_includes/functions.php on line 201
+[08-Sep-2016 19:17:15 America/New_York] PHP Parse error:  syntax error, unexpected '%' in /NAShomes/publichtmls/mycpanel/psps/public_html/index2.php on line 2
+[08-Sep-2016 19:18:07 America/New_York] PHP Parse error:  syntax error, unexpected '%' in /NAShomes/publichtmls/mycpanel/psps/public_html/index2.php on line 3
+[08-Sep-2016 19:19:51 America/New_York] PHP Parse error:  syntax error, unexpected '=' in /NAShomes/publichtmls/mycpanel/psps/public_html/index2.php on line 3
+[08-Sep-2016 19:20:11 America/New_York] PHP Parse error:  syntax error, unexpected '=' in /NAShomes/publichtmls/mycpanel/psps/public_html/index2.php on line 3
+[08-Sep-2016 19:20:28 America/New_York] PHP Fatal error:  Class 'Twig_Loader_Array' not found in /NAShomes/publichtmls/mycpanel/psps/public_html/index2.php on line 3
+[08-Sep-2016 19:21:20 America/New_York] PHP Fatal error:  Uncaught exception 'Twig_Error_Loader' with message 'Template "layout" is not defined.' in /NAShomes/publichtmls/mycpanel/psps/php/Twig/Loader/Array.php:77
+Stack trace:
+#0 /NAShomes/publichtmls/mycpanel/psps/php/Twig/Environment.php(312): Twig_Loader_Array->getCacheKey('layout')
+#1 /NAShomes/publichtmls/mycpanel/psps/php/Twig/Environment.php(378): Twig_Environment->getTemplateClass('layout', NULL)
+#2 /NAShomes/publichtmls/mycpanel/psps/php/Twig/Environment.php(347): Twig_Environment->loadTemplate('layout')
+#3 /NAShomes/publichtmls/mycpanel/psps/public_html/index2.php(9): Twig_Environment->render('layout', Array)
+#4 {main}
+  thrown in /NAShomes/publichtmls/mycpanel/psps/php/Twig/Loader/Array.php on line 77
+[08-Sep-2016 19:24:25 America/New_York] PHP Fatal error:  Uncaught exception 'Twig_Error_Loader' with message 'Unable to find template "layout" (looked into: .).' in /NAShomes/publichtmls/mycpanel/psps/php/Twig/Loader/Filesystem.php:215
+Stack trace:
+#0 /NAShomes/publichtmls/mycpanel/psps/php/Twig/Loader/Filesystem.php(139): Twig_Loader_Filesystem->findTemplate('layout')
+#1 /NAShomes/publichtmls/mycpanel/psps/php/Twig/Environment.php(312): Twig_Loader_Filesystem->getCacheKey('layout')
+#2 /NAShomes/publichtmls/mycpanel/psps/php/Twig/Environment.php(378): Twig_Environment->getTemplateClass('layout', NULL)
+#3 /NAShomes/publichtmls/mycpanel/psps/php/Twig/Environment.php(347): Twig_Environment->loadTemplate('layout')
+#4 /NAShomes/publichtmls/mycpanel/psps/public_html/index2.php(8): Twig_Environment->render('layout', Array)
+#5 {main}
+  thrown in /NAShomes/publichtmls/mycpanel/psps/php/Twig/Loader/Filesystem.php on line 215
+[08-Sep-2016 19:24:43 America/New_York] PHP Fatal error:  Uncaught exception 'Twig_Error_Syntax' with message 'Expected endblock for block "head" (but "body" given) in "layout.php" at line 11.' in /NAShomes/publichtmls/mycpanel/psps/php/Twig/TokenParser/Block.php:43
+Stack trace:
+#0 /NAShomes/publichtmls/mycpanel/psps/php/Twig/Parser.php(187): Twig_TokenParser_Block->parse(Object(Twig_Token))
+#1 /NAShomes/publichtmls/mycpanel/psps/php/Twig/Parser.php(100): Twig_Parser->subparse(NULL, false)
+#2 /NAShomes/publichtmls/mycpanel/psps/php/Twig/Environment.php(619): Twig_Parser->parse(Object(Twig_TokenStream))
+#3 /NAShomes/publichtmls/mycpanel/psps/php/Twig/Environment.php(671): Twig_Environment->parse(Object(Twig_TokenStream))
+#4 /NAShomes/publichtmls/mycpanel/psps/php/Twig/Environment.php(396): Twig_Environment->compileSource('require_once '....', 'layout.php')
+#5 /NAShomes/publichtmls/mycpanel/psps/php/Twig/Environment.php(347): Twig_Environment->loadTemplate('layout.php')
+#6 /NAShomes/publichtmls/mycpanel/psps/public_html/index2.php(8): Twig_Environment->render('layout. in /NAShomes/publichtmls/mycpanel/psps/php/Twig/TokenParser/Block.php on line 43
+[08-Sep-2016 19:41:03 America/New_York] PHP Warning:  mysqli_fetch_array() expects parameter 1 to be mysqli_result, boolean given in /NAShomes/publichtmls/mycpanel/psps/public_html/PL_includes/functions.php on line 201
+[08-Sep-2016 19:41:09 America/New_York] PHP Warning:  mysqli_fetch_array() expects parameter 1 to be mysqli_result, boolean given in /NAShomes/publichtmls/mycpanel/psps/public_html/PL_includes/functions.php on line 201

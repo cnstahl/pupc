@@ -1,0 +1,10 @@
+/*  Website styling, by Ming-Yee Tsang */
+
+body {
+	 padding-top: 51px;
+}
+#container {
+	float: none;
+	max-width: 900px;
+}
+
