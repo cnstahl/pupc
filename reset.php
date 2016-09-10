@@ -74,7 +74,7 @@ else
 	<br />
 	<form method="post" id="greeting_block">  
 	<input type="text" name="email" placeholder="email" class="greeting_desc"></input><br /><br />
-	<input type="submit" name="submit" value="Reset" class="home_buttons"></input></h1>
+	<input type="submit" name="submit" value="Reset" class="home_buttons"></input>
 	</form>
 	<?php
 if ($submit)

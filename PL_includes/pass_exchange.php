@@ -16,11 +16,11 @@
 	}
 ?>
 <form method="post" id="greeting_block">  
-	<h3 class="greeting_step"></h1><input type="text" name="subject" placeholder="Which topic(s)?" class="greeting_desc"></input>
-	<h3 class="greeting_step"></h1><input type="text" name="date" placeholder="When? (YEAR-MO-DY HR:MN)" class="greeting_desc"></input>
-	<h3 class="greeting_step"></h1><input type="text" name="quantity" placeholder="How many students?" class="greeting_desc"></input>
-	<h3 class="greeting_step"></h1><select name="type" class="greeting_desc"><option>Mentor Offer or Request?</option><option value="1">I request to mentor me</option><option value="2">I offer to mentor someone</option></select>
-	<h3 class="greeting_step"></h1><input type="submit" name="pass_submit" value="submit" class="home_buttons"></input>
+	<h1 class="greeting_step"></h1><input type="text" name="subject" placeholder="Which topic(s)?" class="greeting_desc"></input>
+	<h1 class="greeting_step"></h1><input type="text" name="date" placeholder="When? (YEAR-MO-DY HR:MN)" class="greeting_desc"></input>
+	<h1 class="greeting_step"></h1><input type="text" name="quantity" placeholder="How many students?" class="greeting_desc"></input>
+	<h1 class="greeting_step"></h1><select name="type" class="greeting_desc"><option>Mentor Offer or Request?</option><option value="1">I would like to be mentored</option><option value="2">I would like to mentor someone</option></select>
+	<h1 class="greeting_step"></h1><input type="submit" name="pass_submit" value="submit" class="home_buttons"></input>
 </form>
 </center>
 <h3>Requests</h3>

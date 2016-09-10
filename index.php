@@ -59,7 +59,7 @@ if ($_GET["logout"])
         <tr>
           <td width="200">
             <div class="pspslogo"> <a href="/index.php"><img src="img/logo.png"
-                height="125" hspace="0" vspace="0" width="170"> </div>
+                height="125" hspace="0" vspace="0" width="170"></a></div>
           </td>
         </tr>
       </tbody>
@@ -90,18 +90,18 @@ if ($_GET["logout"])
                         </ul>
                         <div class="tab-content white-back">
                             <div class="tab-pane content-section active" id="profile">
-                                <headings>
+                                <heading>
                                     <?php $text = isset($_GET["profile"]) ? "<a href=\"index.php#profile\"><h3 style=\"font-family: pacifico; text-decoration: underline; color: black;\">back to profile (view mode)</h3></a>" : '';
 						echo $text;
 					 ?>
-                                </headings>
+                                </heading>
 				    <?php include("./PL_includes/profile.php"); ?>
                             <div class="tab-pane content-section" id="learn">
-                                <headings>
+                                <heading>
                                     <?php $text = isset($_GET["debate"]) ? "<a href=\"index.php#debates\"><h3 style=\"font-family: pacifico; text-decoration: underline; color: black;\">back to learning corner</h3></a>" : '';
 						echo $text;
 					 ?>
-                                </headings>
+                                </heading>
 				    <?php include("./PL_includes/learn.php"); ?>
                                 <!--<div class="pagination pagination-centered">
                                     <ul>
@@ -116,11 +116,11 @@ if ($_GET["logout"])
                                 </div>-->
                             </div>
                             <div class="tab-pane content-section" id="connect">
-                                <headings>
+                                <heading>
                                     <?php $text = isset($_GET["question"]) ? "<a href=\"index.php#connect\"><h3 style=\"font-family: pacifico; text-decoration: underline; color: black;\">back to questions</h3></a>" : '';
 						echo $text;
 					 ?>
-                                </headings>
+                                </heading>
 								<?php include("./PL_includes/the_connection.php"); ?>
                                 <!--<div class="pagination pagination-centered">
                                     <ul>
@@ -138,11 +138,11 @@ if ($_GET["logout"])
 					<?php include("./PL_includes/pass_exchange.php"); ?>
                             </div>
                             <div class="tab-pane content-section" id="messenger">
-                                <headings>
+                                <heading>
                                     <?php $text = isset($_GET["message"]) ? "<a href=\"index.php#messenger\"><h3 style=\"font-family: pacifico; text-decoration: underline; color: black;\">back to messages</h3></a>" : '';
 						echo $text;
 					 ?>
-                                </headings>
+                                </heading>
 								<?php include("./PL_includes/messenger.php"); ?>
                             </div>
                         </div>

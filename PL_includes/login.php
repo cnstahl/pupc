@@ -21,7 +21,7 @@
                             <input type="password" name="pass" placeholder="Password" class="input-small" />
                             <input type="submit" name="submit" class="btn btn-inverse" value="Sign in" />
                         </form>
-			   <a href="reset.php"><h6 style="margin-left:2px;">Forgot your password?</h6></a>
+			   <h6 style="margin-left:2px;"><a href="reset.php">Forgot your password?</a></h6>
 <?php
 if ($login_submit)
 	echo $login_result;

@@ -1,13 +1,19 @@
 <?php
 /* This file contains the the MySQL connection and definitions for all of the custom functions used in PSPS Portal:
-login(), register(), valid_login(), valid_registration(), registration_error(), add_question(), 
-display_questions(), add_debate(), add_response(), display_debates(), display_responses() */
+ * login(), register(), valid_login(), valid_registration(), registration_error(), add_question(), 
+ * display_questions(), add_debate(), add_response(), display_debates(), display_responses()
+ */
 
 ob_start();
 
-//Create MySQL connection variable
+// Create MySQL connection variable
 $mysql_con = mysqli_connect("localhost", "psps_platmin", "Zx2p?&d:+bbD", "psps_platform") or die(mysqli_connect_error());
 
+/**
+ * Authenticates the user with given username and password.
+ * @param string $username the given username
+ * @param string $password the given password
+ */
 function login($username, $password)
 {
 	global $mysql_con;
@@ -20,6 +26,12 @@ function login($username, $password)
 		mysqli_query($mysql_con, "UPDATE members SET session_id='$SessID' WHERE uid=$UserID") or die(mysqli_query($mysql_con));
 }
 
+/**
+ * 
+ * @param string $username the given username
+ * @param string $password the given password
+ * @return 
+ */
 function valid_login($username, $password)
 {
 	global $mysql_con;
@@ -28,6 +40,10 @@ function valid_login($username, $password)
 	return mysqli_num_rows($query);
 }
 
+/**
+ * 
+ * @return boolean
+ */
 function logged_in()
 {
 	global $mysql_con;
@@ -41,6 +57,11 @@ function logged_in()
 	}
 }
 
+/**
+ * Registers the given email and password as a new member.
+ * @param string $password the given password
+ * @param string $email the given email
+ */
 function register($password, $email)
 {
 	global $mysql_con;
@@ -57,6 +78,12 @@ function register($password, $email)
 	mysqli_query($mysql_con, "INSERT INTO members (date, IP, type, salt, password, uid, email) VALUES ('$date', '$ip', '$type', '$salt', '$password', '$UserID', '$email')");
 }
 
+/**
+ * 
+ * @param string $password
+ * @param string $email
+ * @return boolean
+ */
 function valid_registration($password, $email)
 {
 	global $mysql_con;
@@ -64,6 +91,12 @@ function valid_registration($password, $email)
 	return !(mysqli_num_rows($email_query) || !preg_match('#[a-zA-Z0-9_]+@princeton\.edu#i', $email) || strlen($password) < 7 || strlen($password) > 100);
 }
 
+/**
+ * 
+ * @param string $password
+ * @param string $email
+ * @return string
+ */
 function registration_error($password, $email)
 {
 	global $mysql_con;
@@ -79,6 +112,13 @@ function registration_error($password, $email)
 	return $error;
 }
 
+/**
+ * 
+ * @param string $code
+ * @param string $email
+ * @param string $new_password
+ * @return string
+ */
 function reset_password($code, $email, $new_password)
 {
 	global $mysql_con;
@@ -94,6 +134,7 @@ function reset_password($code, $email, $new_password)
 		return "That code was not found in the database; please attempt to reset your password again.";
 }
 
+/** Logs out the current user. */
 function logout()
 {
 	global $mysql_con;
@@ -106,6 +147,11 @@ function logout()
 	}
 }
 
+/**
+ * 
+ * @param string $title
+ * @param string $content
+ */
 function add_question($title, $content)
 {
 	global $mysql_con;
@@ -115,6 +161,10 @@ function add_question($title, $content)
 	mysqli_query($mysql_con, "INSERT INTO questions (title, content, qid, author_id) VALUES ('$title', '$content', $QuestionID, '$author')");
 }
 
+/**
+ * 
+ * @param string $content
+ */
 function add_answer($content)
 {
 	global $mysql_con;
@@ -128,6 +178,10 @@ function add_answer($content)
 	mysqli_query($mysql_con, "INSERT INTO responses (type, content, post_id, author_id, question, date) VALUES (1, '$content', $PostID, '$author', '$question', '$date')");
 }
 
+/**
+ * 
+ * @param unknown $question
+ */
 function display_answers($question)
 {
 	global $mysql_con;
@@ -138,6 +192,10 @@ function display_answers($question)
 			echo "<span class=\"list\">\n$content\n</span><hr />\n";
 }
 
+/**
+ * 
+ * @param string $message
+ */
 function display_replies($message)
 {
 	global $mysql_con;
@@ -148,6 +206,7 @@ function display_replies($message)
 			echo "<span class=\"list\">\n$content\n</span><hr />\n";
 }
 
+/** */
 function display_questions()
 {
 	global $mysql_con;
@@ -160,6 +219,7 @@ function display_questions()
 						  </div>";
 }
 
+/** */
 function display_recent_answers()
 {
 	global $mysql_con;
@@ -176,6 +236,7 @@ function display_recent_answers()
 	}
 }
 
+/** */
 function display_inbox()
 {
 	global $mysql_con;
@@ -193,6 +254,7 @@ function display_inbox()
 	}
 }
 
+/** */
 function display_offers()
 {
 	global $mysql_con;
@@ -213,6 +275,7 @@ function display_offers()
 	}
 }
 
+/** */
 function display_requests()
 {
 	global $mysql_con;
@@ -233,6 +296,13 @@ function display_requests()
 	}
 }
 
+/**
+ * 
+ * @param string $subject
+ * @param string $date
+ * @param string $quantity
+ * @param string $type
+ */
 function add_pass($subject, $date, $quantity, $type)
 {
 	global $mysql_con;
@@ -247,6 +317,11 @@ function add_pass($subject, $date, $quantity, $type)
 	mysqli_query($mysql_con, "INSERT INTO exchanges (quantity, subject, date, author, type, pass_id) VALUES ($quantity, '$subject', '$date', $author, $type, $PassID)") or die("horses".mysqli_error($mysql_con));
 }
 
+/**
+ * 
+ * @param unknown $question
+ * @return unknown
+ */
 function get_question($question)
 {
 	global $mysql_con;
@@ -257,6 +332,11 @@ function get_question($question)
 	return $question;
 }
 
+/**
+ * 
+ * @param string $id
+ * @return unknown
+ */
 function get_message($id)
 {
 	global $mysql_con;
@@ -270,6 +350,11 @@ function get_message($id)
 	return $message;
 }
 
+/**
+ * 
+ * @param unknown $question
+ * @return unknown
+ */
 function get_qid($question)
 {
 	global $mysql_con;
@@ -279,6 +364,13 @@ function get_qid($question)
 	return $qid;
 }
 
+/**
+ * 
+ * @param string $title
+ * @param string $description
+ * @param string $video_id
+ * @param string $bio
+ */
 function add_debate($title, $description, $video_id, $bio)
 {
 	global $mysql_con;
@@ -288,6 +380,11 @@ function add_debate($title, $description, $video_id, $bio)
 	mysqli_query($mysql_con, "INSERT INTO debates (title, description, video_id, did, author_id, bio) VALUES ('$title', '$description', '$video_id', $DebateID, '$author', '$bio')") or die(mysqli_error($mysql_con));
 }
 
+/**
+ * 
+ * @param string $content
+ * @param unknown $yn
+ */
 function add_response($content, $yn)
 {
 	global $mysql_con;
@@ -301,6 +398,12 @@ function add_response($content, $yn)
 	mysqli_query($mysql_con, "INSERT INTO responses (type, content, post_id, author_id, question, date, yn) VALUES (2, '$content', $PostID, '$author', '$debate', '$date', $yn)");
 }
 
+/**
+ * 
+ * @param string $recipient
+ * @param string $subject
+ * @param string $message
+ */
 function send_message($recipient, $subject, $message)
 {
 	global $mysql_con;
@@ -312,6 +415,11 @@ function send_message($recipient, $subject, $message)
 	mysqli_query($mysql_con, "INSERT INTO messages (message_id, recipient, sender, subject, content, date) VALUES ($MessageID, '$recipient', '$sender', '$subject', '$message', '$date')") or die(mysqli_error($mysql_con));
 }
 
+/**
+ * 
+ * @param unknown $parent
+ * @param string $message
+ */
 function add_reply($parent, $message)
 {
 	global $mysql_con;
@@ -325,6 +433,10 @@ function add_reply($parent, $message)
 	mysqli_query($mysql_con, "INSERT INTO messages (message_id, sender, content, date, parent_id) VALUES ($MessageID, '$sender', '$message', '$date', '$parent')") or die(mysqli_error($mysql_con));
 }
 
+/**
+ * 
+ * @param unknown $debate
+ */
 function display_responses($debate)
 {
 	global $mysql_con;
@@ -342,6 +454,7 @@ function display_responses($debate)
 	}
 }
 
+/** */
 function display_debates()
 {
 	global $mysql_con;
@@ -359,6 +472,11 @@ function display_debates()
 	}
 }
 
+/**
+ * 
+ * @param unknown $debate
+ * @return unknown
+ */
 function get_debate($debate)
 {
 	global $mysql_con;
@@ -368,6 +486,10 @@ function get_debate($debate)
 	return $debate;
 }
 
+/**
+ * 
+ * @return boolean
+ */
 function administrator()
 {
 	global $mysql_con;
@@ -380,6 +502,10 @@ function administrator()
 	}
 }
 
+/**
+ * 
+ * @return boolean
+ */
 function validated()
 {
 	global $mysql_con;
@@ -392,6 +518,11 @@ function validated()
 	}
 }
 
+/**
+ * 
+ * @param string $email
+ * @return boolean
+ */
 function registered($email)
 {
 	global $mysql_con;
@@ -400,7 +531,13 @@ function registered($email)
 	if (mysqli_num_rows($query))
 		return true;
 }
-	
+
+/**
+ * Returns a hash generated from the given password and salt
+ * @param string $password the given password
+ * @param string $salt the given salt
+ * @return the generated hash string
+ */
 function generate_hash($password, $salt)
 {
 	global $mysql_con;
@@ -410,6 +547,11 @@ function generate_hash($password, $salt)
 	return $hash;
 }
 
+/**
+ * 
+ * @param string $username
+ * @return unknown
+ */
 function get_salt($username)
 {
 	global $mysql_con;
@@ -418,6 +560,11 @@ function get_salt($username)
 	return $salt[0];
 }
 
+/**
+ * 
+ * @param string $UserId
+ * @return string
+ */
 function get_username($UserId)
 {		 
 	global $mysql_con;
@@ -430,6 +577,11 @@ function get_username($UserId)
 	return $username;
 }
 
+/**
+ * 
+ * @param unknown $id
+ * @return unknown
+ */
 function get_title($id)
 {		 
 	global $mysql_con;
@@ -440,6 +592,11 @@ function get_title($id)
 	return $title;
 }
 
+/**
+ * 
+ * @param string $UserId
+ * @return string
+ */
 function get_id($UserId)
 {		 
 	global $mysql_con;
@@ -451,6 +608,10 @@ function get_id($UserId)
 	return $username;
 }
 
+/**
+ * 
+ * @param string $email
+ */
 function email_registrations($email)
 {
 	global $mysql_con;
@@ -467,6 +628,10 @@ function email_registrations($email)
 	mail($to, $subject, $message, $headers);
 }
 
+/**
+ * 
+ * @param string $email
+ */
 function email_reset($email)
 {
 	global $mysql_con;
@@ -483,6 +648,11 @@ function email_reset($email)
 	mail($to, $subject, $message, $headers);
 }
 
+/**
+ * Verifies that the given verification code corresponds to the given email address.
+ * @param string $code the given verification code
+ * @param string $email the given email address
+ */
 function verify($code, $email)
 {
 	global $mysql_con;
@@ -494,6 +664,11 @@ function verify($code, $email)
 	}
 }
 
+/**
+ * Converts the given input string to a safe string by escaping all relevant characters of the given language (SQL or HTML).
+ * @param string $input the given input string
+ * @param string $method the given language
+ */
 function safe($input, $method)
 {
 	global $mysql_con;
@@ -506,6 +681,7 @@ function safe($input, $method)
 	}
 }
 
+/** */
 function insert_stats()
 {
 	global $mysql_con;

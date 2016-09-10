@@ -22,10 +22,10 @@ if (!$_GET['message'])
 	}
 ?>
 <form method="post" id="greeting_block">
-	<h3 class="greeting_step"></h1><input type="hidden" name="recipient" value="<?php echo $to; ?>" placeholder="Recipient" class="greeting_desc"></input>
-	<h3 class="greeting_step"></h1><input type="text" name="subject" value="<?php echo $sub; ?>" placeholder="Subject" class="greeting_desc"></input>
-	<h3 class="greeting_step"></h1><textarea name="message" placeholder="Message" class="greeting_desc"></textarea>
-	<h3 class="greeting_step"></h1><input type="submit" name="submit" value="Send" class="home_buttons"></input>
+	<h1 class="greeting_step"></h1><input type="hidden" name="recipient" value="<?php echo $to; ?>" placeholder="Recipient" class="greeting_desc"></input>
+	<h1 class="greeting_step"></h1><input type="text" name="subject" value="<?php echo $sub; ?>" placeholder="Subject" class="greeting_desc"></input>
+	<h1 class="greeting_step"></h1><textarea name="message" placeholder="Message" class="greeting_desc"></textarea>
+	<h1 class="greeting_step"></h1><input type="submit" name="submit" value="Send" class="home_buttons"></input>
 </form>    
 <?php
 	if ($submit)
