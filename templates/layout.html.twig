@@ -3,20 +3,20 @@
 	<head>
 {% block head %}
 		<title>{% block title %}{{ title }}{% endblock %} - Princeton Society of Physics Students</title>
-{% include "partials/meta.php" %}
-{% include "partials/css.php" %}
-{% include "partials/favicon.php" %}
+{% include "partials/meta.html.twig" %}
+{% include "partials/css.html.twig" %}
+{% include "partials/favicon.html.twig" %}
 {% endblock head %}
 	</head>
 	<body>
-		{% include "partials/navbar.php" %}
+		{% include "partials/navbar.html.twig" %}
 		<div id="container" class="col-xs-12">
 {% block body %}
 			<header><h1>{% block heading %}{{ title }}{% endblock %}</h1></header>
 			
 			<!-- Beginning of content -->
 {% endblock body %}
-			{% include "partials/footer.php" %}
+			{% include "partials/footer.html.twig" %}
 		</div>
 	</body>
 </html>
