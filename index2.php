@@ -2,5 +2,7 @@
 require_once 'TemplateRenderer.php';
 
 $renderer = new TemplateRenderer();
-print $renderer->render('layout.html.twig', array());
+print $renderer->render('index.php.twig', array(
+	'title' => 'Portal'
+));
 ?>
