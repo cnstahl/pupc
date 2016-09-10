@@ -6,6 +6,7 @@ class TemplateRenderer
 {
 	public $loader; // Instance of Twig_Loader_Filesystem
 	public $environment; // Instance of Twig_Environment
+	public $flashes;
 
 	public function __construct($envOptions = array(), $templateDirs = array())
 	{
@@ -23,10 +24,12 @@ class TemplateRenderer
 		);
 		$this->loader = new Twig_Loader_Filesystem($templateDirs);
 		$this->environment = new Twig_Environment($this->loader, $envOptions);
+		$this->flashes = [];
 	}
 
 	public function render($templateFile, array $variables)
 	{
+		$variables['flashes'] = $this->flashes;
 		return $this->environment->render($templateFile, $variables);
 	}
 }

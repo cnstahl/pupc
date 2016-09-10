@@ -8,6 +8,7 @@ ob_start();
 
 // Create MySQL connection variable
 $mysql_con = mysqli_connect("localhost", "psps_platmin", "Zx2p?&d:+bbD", "psps_platform") or die(mysqli_connect_error());
+$flashes = array();
 
 /**
  * Authenticates the user with given username and password.
@@ -61,6 +62,7 @@ function logged_in()
  * Registers the given email and password as a new member.
  * @param string $password the given password
  * @param string $email the given email
+ * @return whether the registration was successful
  */
 function register($password, $email)
 {
@@ -75,7 +77,7 @@ function register($password, $email)
 	$UserID = mysqli_fetch_array($UserID_query);
 	$UserID = $UserID[0]+1;
 	email_registrations($email);
-	mysqli_query($mysql_con, "INSERT INTO members (date, IP, type, salt, password, uid, email) VALUES ('$date', '$ip', '$type', '$salt', '$password', '$UserID', '$email')");
+	return mysqli_query($mysql_con, "INSERT INTO members (date, IP, type, salt, password, uid, email) VALUES ('$date', '$ip', '$type', '$salt', '$password', '$UserID', '$email')");
 }
 
 /**
@@ -101,13 +103,13 @@ function registration_error($password, $email)
 {
 	global $mysql_con;
 	$email_query = mysqli_query($mysql_con, "SELECT * FROM members WHERE email='$email'");
-	$error = "There was a problem with your registration:";
+	$error = "There was a problem with your registration: ";
 	if (mysqli_num_rows($email_query))
-		$error .= "<br>- The email you entered already belongs to another account.";
+		$error .= "The email you entered already belongs to another account.";
 	if (!preg_match('#[a-zA-Z0-9]+@princeton\.edu#i', $email))
-		$error .= "<br>- The email you entered was invalid; the correct format is NetID@princeton.edu.";
+		$error .= "The email you entered was invalid; the correct format is NetID@princeton.edu.";
 	if (strlen($password) < 7 || strlen($password) > 100)
-		$error .= "<br>- Your password must be between 7 and 100 characters long.";
+		$error .= "Your password must be between 7 and 100 characters long.";
 	
 	return $error;
 }
@@ -694,5 +696,18 @@ function insert_stats()
 	//email_registrations($email);
 	mysqli_query($mysql_con, "INSERT INTO statistics (date, IP, ) VALUES ('$date', '$ip', '$type', '$salt', '$password', '$UserID', '$email')");
 	mysqli_query($mysql_con, "INSERT INTO statistics ()");
+}
+
+/**
+ * Flashes the specified message with the given alert type.
+ * @param string message the message type
+ * @param string type the alert type
+ * @return the alert type
+ */
+function create_alert($message, $type)
+{
+	global $renderer;
+	array_push($renderer->flashes, [$type, $message]);
+	return $type;
 }
 ?>

@@ -5,12 +5,19 @@
 		<title>{% block title %}{{ title }}{% endblock %} - Princeton Society of Physics Students</title>
 {% include "partials/meta.html.twig" %}
 {% include "partials/css.html.twig" %}
+{% include "partials/js.html.twig" %}
 {% include "partials/favicon.html.twig" %}
 {% endblock head %}
 	</head>
 	<body>
 		{% include "partials/navbar.html.twig" %}
 		<div class="container col-xs-12">
+{% for flash in flashes %}
+			<div class="alert alert-{{ flash[0] }} fade in">
+				<a href="#" class="close" data-dismiss="alert">&times;</a>
+				{{ flash[1] }}
+			</div>
+{% endfor %}
 {% block body %}
 			<header><h1>{% block heading %}{{ title }}{% endblock %}</h1></header>
 			
