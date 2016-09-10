@@ -1,18 +1,24 @@
 {% extends "layout.html.twig" %}
 
+{% set title = "Portal" %}
+
 {% block body %}
 	{{ parent() }}
-
-	<div class="col-xs-12 col-sm-5" id="welcome">
-		<p><span class="pacifico"><font color="dark-orange">Learning</font> Corner: </span>
-		watch lectures or read content posted by the PSPS officers and respond to it.</p>
-		<p><span class="pacifico">Physics <font color="dark-orange">Connect</font>: </span>
-		interact with other Princeton physics-minded students by discussing the PSPS, the physics department, or physics in general.</p>
-		<p><span class="pacifico"><font color="dark-orange">Mentoring</font> Set-up: </span>
-		offer or request from your peers free mentoring sessions, in accordance with University regulations.</p>
-		<p><span class="pacifico">Register to gain access: </span> <a href="./register.php" class="btn btn-inverse">Register</a></p>
-	</div>
-	<div class="hidden-xs col-sm-5">
-		<img src="img/slides/jadwin.jpg" alt="PSPS" />
+	
+	<a href="Register.php" class="btn btn-primary btn-inverse">Register</a> now to gain access to our resources.
+	<div class="row">
+		<div class="col-xs-12 col-sm-5" id="welcome">
+			<h2>Learning Corner</h2>
+			Watch lectures or read content posted by the PSPS officers and respond to it.</p>
+			
+			<h2>Physics Connect</h2>
+			Interact with other Princeton physics-minded students by discussing PSPS, the physics department, or physics in general.
+			
+			<h2>Mentoring Setup</h2>
+			Offer to or request from your peers free mentoring sessions, in accordance with University regulations.</p>
+		</div>
+		<div class="hidden-xs col-sm-5">
+			<img src="img/slides/jadwin.jpg" alt="PSPS" />
+		</div>
 	</div>
 {% endblock body %}

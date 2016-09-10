@@ -1,10 +1,20 @@
 /*  Website styling, by Ming-Yee Tsang */
 
-body {
-	 padding-top: 51px;
+html {
+
 }
-#container {
+body {
+	 padding-top: 50px;
+	 background: url("http://feynman.princeton.edu/~psps/imgs/webbackground.jpg") repeat #ed6b49;
+}
+body > div.container {
+	background: white;
+}
+div.container {
 	float: none;
 	max-width: 900px;
+	margin: 0 auto;
 }
-
+img {
+	max-width: 100%
+}

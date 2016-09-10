@@ -1,0 +1,17 @@
+{% extends "layout.html.twig" %}
+
+{% set title = "Registration" %}
+
+{% block body %}
+	{{ parent() }}
+	
+	<form method="post" id="greeting_block">  
+	<input type="text" name="usernm" placeholder="username" class="greeting_desc"></input><br /><br />
+	<input type="text" name="email" placeholder="email" class="greeting_desc"></input><br /><br />
+	<input type="password" name="pass" placeholder="password" class="greeting_desc"></input><br /><br />
+	<input type="submit" name="submit" value="Register" class="home_buttons"></input></h1>
+	</form>
+{% if submit %}
+	{{ register_result }}
+{% endif %}
+{% endblock body %}

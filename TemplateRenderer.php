@@ -1,5 +1,5 @@
 <?php
-require_once '/path/to/lib/Twig/Autoloader.php';
+require_once '../php/Twig/Autoloader.php';
 Twig_Autoloader::register();
 
 class TemplateRenderer
