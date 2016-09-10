@@ -9,6 +9,7 @@ body {
 }
 body > div.container {
 	background: white;
+	padding-bottom: 1em;
 }
 div.container {
 	float: none;

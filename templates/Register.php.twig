@@ -5,11 +5,21 @@
 {% block body %}
 	{{ parent() }}
 	
-	<form method="post" id="greeting_block">  
-	<input type="text" name="usernm" placeholder="username" class="greeting_desc"></input><br /><br />
-	<input type="text" name="email" placeholder="email" class="greeting_desc"></input><br /><br />
-	<input type="password" name="pass" placeholder="password" class="greeting_desc"></input><br /><br />
-	<input type="submit" name="submit" value="Register" class="home_buttons"></input></h1>
+	<form method="post">
+		<div class="form-group">
+			<label for="username">Username:</label>
+			<input type="text" class="form-control" name="username" placeholder="Enter username"></input>
+		</div>
+		<div class="form-group">
+			<label for="email">Email address:</label>
+			<input type="email" class="form-control" name="email" placeholder="Enter email"></input>
+		</div>
+		<div class="form-group">
+			<label for="password">Password:</label>
+			<input type="password" class="form-control" name="password" placeholder="Enter assword"></input>
+			<input type="password" class="form-control" name="repassword" placeholder="Re-enter password"></input>
+		</div>
+		<button type="submit" class="btn btn-default">Register</button>
 	</form>
 {% if submit %}
 	{{ register_result }}
