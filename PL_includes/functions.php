@@ -25,7 +25,7 @@ function valid_login($username, $password)
 	global $mysql_con;
 	$password = generate_hash($password, get_salt($username));
 	$query = mysqli_query($mysql_con, "SELECT * FROM members WHERE password='$password' AND email='$username'") or die(mysqli_query($mysql_con));
-	return mysqli_num_rows($query)
+	return mysqli_num_rows($query);
 }
 
 function logged_in()
@@ -46,7 +46,7 @@ function register($password, $email)
 	global $mysql_con;
 	date_default_timezone_set("America/New_York");
 	$date = date("d/m/Y");
-	 $ip = $_SERVER["REMOTE_ADDR"]; 
+	$ip = $_SERVER["REMOTE_ADDR"]; 
 	$type = 3;
 	$salt = substr(str_shuffle("AABcDdeFgHJkLmNnoPqQrrSssTtuVwxYz12334567889"),0,6);
 	$password = generate_hash($password, $salt);
@@ -61,7 +61,7 @@ function valid_registration($password, $email)
 {
 	global $mysql_con;
 	$email_query = mysqli_query($mysql_con, "SELECT * FROM members WHERE email='$email'");
-	return !(mysqli_num_rows($email_query) || !preg_match('#[a-zA-Z0-9_]+@princeton\.edu#i', $email) || strlen($password) < 7 || strlen($password) > 100)
+	return !(mysqli_num_rows($email_query) || !preg_match('#[a-zA-Z0-9_]+@princeton\.edu#i', $email) || strlen($password) < 7 || strlen($password) > 100);
 }
 
 function registration_error($password, $email)
