@@ -4,7 +4,7 @@ include("./PL_includes/functions.php");
 
 // Set reset variables
 $submit = $_POST["submit"];
-$email = safe($_POST["email"], "sql");
+$email = safe($_POST["email"], "sql").'@princeton.edu';
 $code = safe($_POST["code"], "sql");
 $password = safe($_POST["password"], "sql");
 $repassword = safe($_POST["repassword"], "sql");
@@ -17,9 +17,13 @@ if ($_GET['reset'] == 'true') { // Verify code is correct: if it is, password bl
 	$email = safe($_GET['email'], 'sql');
 	$code = safe($_GET['code'], 'sql');
 	if (verify_reset($code, $email))
+	{
 		$reset = true;
+		if ($submit) // New password submitted
+			reset_password($email, $password, $repassword);
+	}
 }
-else // POST request submitted
+else if ($submit) // POST request submitted
 {
 	if ($code == '') // Initiating recovery process
 		// Verify that the reset form was submitted and that the email is registered

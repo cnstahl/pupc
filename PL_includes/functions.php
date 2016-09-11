@@ -220,7 +220,7 @@ function email_reset($email)
 	$end = strpos($email, '@');
 	$name = substr($email, 0, $end);
 	$rand = substr(str_shuffle($rand_gen), 0, $substr_gen);
-	mysqli_query($mysql_con, "INSERT INTO reset_codes (email, code) VALUES ('$email', '$rand')");
+	mysqli_query($mysql_con, "INSERT INTO reset_codes (email, code) VALUES ('$email', '$rand') ON DUPLICATE KEY UPDATE code='$rand'");
 	$to      = $email;
 	$subject = 'PSPS Portal password reset';
 	$message = "Hello $name,<br /><br />To reset your password, please visit the following link: http://psps.mycpanel.princeton.edu/Reset.php?reset=true&code=$rand&email=$email.";
@@ -228,7 +228,6 @@ function email_reset($email)
 	$headers .= "Content-type: text/html; charset=iso-8859-1\r\n";
 	$headers .= "List-Unsubscribe: http://psps.mycpanel.princeton.edu/?action=unsubscribe&email=$email";
 	mail($to, $subject, $message, $headers);
-	create_alert("Password-reset email sent.", 'info');
 }
 
 /**
@@ -244,6 +243,8 @@ function verify_reset($code, $email)
 	$code_query = mysqli_query($mysql_con, "SELECT * FROM reset_codes WHERE email='$email' AND code='$code'");
 	if (!mysqli_num_rows($code_query))
 		create_alert("That code is incorrect. Please try to reset your password again.", 'danger');
+	else
+		return true;
 }
 
 /**
@@ -266,7 +267,7 @@ function reset_password($email, $new_password, $re_new_password) // TODO: Limit 
 		create_alert("Your password was successfully reset!", 'success');
 	}
 	else
-		registration_error($new_password, $re_new_password, $email.'asdf');
+		create_alert(registration_error($new_password, $re_new_password, $email.'asdf'), 'danger');
 }
 
 

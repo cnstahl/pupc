@@ -6,7 +6,7 @@
 	{{ parent() }}
 	
 	<form role="form" action="" method="post">
-{% if reset %}
+{% if not reset %}
 		<div class="row">
 			<label for="email" class="col-sm-2 col-form-label">Email address:</label>
 			<div class="col-sm-10">
