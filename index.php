@@ -3,8 +3,8 @@ include("./PL_includes/functions.php");
 
 if ($_GET["code"] && $_GET["email"])
 {
-	$code = $_GET["code"];
-	$email = $_GET["email"];
+	$code = safe($_GET["code"], 'sql');
+	$email = safe($_GET["email"], 'sql');
 	verify($code, $email);
 }
 

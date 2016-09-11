@@ -17,5 +17,12 @@ div.container {
 	margin: 0 auto;
 }
 img {
-	max-width: 100%
+	max-width: 100%;
+}
+alert ul {
+	padding-left: 0;
+	list-style-type: none;
+}
+alert ul > li::before {
+	content: "\2013\2002";
 }

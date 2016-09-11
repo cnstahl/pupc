@@ -9,6 +9,17 @@ ob_start();
 // Create MySQL connection variable
 $mysql_con = mysqli_connect("localhost", "psps_platmin", "Zx2p?&d:+bbD", "psps_platform") or die(mysqli_connect_error());
 $flashes = array();
+$rand_sess = "NnOoPpQqRrSsTtUuVvWwXxYyZz0123456789";
+$rand_salt = "AABcDdeFgHJkLmNnoPqQrrSssTtuVwxYz12334567889";
+$substr_salt = 6;
+$rand_gen = "AaBbCcDdEeFfGgHhIIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz";
+$substr_gen = 10;
+
+
+/**********************************
+ * Authentication functions       *
+ *                                *
+ **********************************/
 
 /**
  * Authenticates the user with given username and password.
@@ -18,7 +29,7 @@ $flashes = array();
 function login($username, $password)
 {
 	global $mysql_con;
-	$SessID = str_shuffle("NnOoPpQqRrSsTtUuVvWwXxYyZz0123456789");
+	$SessID = str_shuffle($rand_sess);
 	setcookie("Psps_sess", $SessID);
 	$UserID_query = mysqli_fetch_array(mysqli_query($mysql_con, "SELECT uid FROM members WHERE email='$username'")) or die(mysqli_query($mysql_con));
 	$UserID = $UserID_query[0];
@@ -28,10 +39,10 @@ function login($username, $password)
 }
 
 /**
- * 
+ * Checks if given password corresponds with the given username.
  * @param string $username the given username
  * @param string $password the given password
- * @return 
+ * @return int {@code 1} if it does, {@code 0} otherwise
  */
 function valid_login($username, $password)
 {
@@ -41,15 +52,12 @@ function valid_login($username, $password)
 	return mysqli_num_rows($query);
 }
 
-/**
- * 
- * @return boolean
- */
+/** Returns whether the current user is logged in. */
 function logged_in()
 {
 	global $mysql_con;
 	$SessID = safe($_COOKIE["Psps_sess"], "sql");
-	$UserID = $_COOKIE["Plink_uid"];
+	$UserID = safe($_COOKIE["Plink_uid"], 'sql');
 	if (is_numeric($UserID))
 	{
 		$query = mysqli_query($mysql_con, "SELECT * FROM members WHERE uid=$UserID AND session_id='$SessID'");
@@ -58,89 +66,11 @@ function logged_in()
 	}
 }
 
-/**
- * Registers the given email and password as a new member.
- * @param string $password the given password
- * @param string $email the given email
- * @return whether the registration was successful
- */
-function register($password, $email)
-{
-	global $mysql_con;
-	date_default_timezone_set("America/New_York");
-	$date = date("d/m/Y");
-	$ip = $_SERVER["REMOTE_ADDR"]; 
-	$type = 3;
-	$salt = substr(str_shuffle("AABcDdeFgHJkLmNnoPqQrrSssTtuVwxYz12334567889"),0,6);
-	$password = generate_hash($password, $salt);
-	$UserID_query = mysqli_query($mysql_con, "SELECT uid FROM members ORDER BY uid DESC LIMIT 1");
-	$UserID = mysqli_fetch_array($UserID_query);
-	$UserID = $UserID[0]+1;
-	email_registrations($email);
-	return mysqli_query($mysql_con, "INSERT INTO members (date, IP, type, salt, password, uid, email) VALUES ('$date', '$ip', '$type', '$salt', '$password', '$UserID', '$email')");
-}
-
-/**
- * 
- * @param string $password
- * @param string $email
- * @return boolean
- */
-function valid_registration($password, $email)
-{
-	global $mysql_con;
-	$email_query = mysqli_query($mysql_con, "SELECT * FROM members WHERE email='$email'");
-	return !(mysqli_num_rows($email_query) || !preg_match('#[a-zA-Z0-9_]+@princeton\.edu#i', $email) || strlen($password) < 7 || strlen($password) > 100);
-}
-
-/**
- * 
- * @param string $password
- * @param string $email
- * @return string
- */
-function registration_error($password, $email)
-{
-	global $mysql_con;
-	$email_query = mysqli_query($mysql_con, "SELECT * FROM members WHERE email='$email'");
-	$error = "There was a problem with your registration: ";
-	if (mysqli_num_rows($email_query))
-		$error .= "The email you entered already belongs to another account.";
-	if (!preg_match('#[a-zA-Z0-9]+@princeton\.edu#i', $email))
-		$error .= "The email you entered was invalid; the correct format is NetID@princeton.edu.";
-	if (strlen($password) < 7 || strlen($password) > 100)
-		$error .= "Your password must be between 7 and 100 characters long.";
-	
-	return $error;
-}
-
-/**
- * 
- * @param string $code
- * @param string $email
- * @param string $new_password
- * @return string
- */
-function reset_password($code, $email, $new_password)
-{
-	global $mysql_con;
-	$code_query = mysqli_query($mysql_con, "SELECT * FROM reset_codes WHERE code='$code'");
-	if (mysqli_num_rows($code_query))
-	{
-		$salt = substr(str_shuffle("AABcDdeFgHJkLmNnoPqQrrSssTtuVwxYz12334567889"),0,6);
-		$password = generate_hash($password, $salt);
-		mysqli_query($mysql_con, "UPDATE members SET password='$password' WHERE email='$email'");
-		return "Your password was sucessfully reset!";
-	}
-	else
-		return "That code was not found in the database; please attempt to reset your password again.";
-}
-
 /** Logs out the current user. */
 function logout()
 {
 	global $mysql_con;
-	$UserID = $_COOKIE["Plink_uid"];
+	$UserID = safe($_COOKIE["Plink_uid"], 'sql');
 	if (is_numeric($UserID))
 	{
 		mysqli_query($mysql_con, "UPDATE members SET session_id=NULL WHERE uid=$UserID") or die(mysqli_error($mysql_con));
@@ -149,18 +79,200 @@ function logout()
 	}
 }
 
+
+/**********************************
+ * Registration functions         *
+ *                                *
+ **********************************/
+
+/**
+ * Registers the given email and password as a new member.
+ * Note: this function assumes that the given email is SQL-safe.
+ * @param string $password the given password
+ * @param string $email the given email
+ * @return boolean whether the registration was successful
+ */
+function register($password, $email)
+{
+	global $mysql_con;
+	date_default_timezone_set("America/New_York");
+	$date = date("d/m/Y");
+	$ip = $_SERVER["REMOTE_ADDR"]; 
+	$type = 3;
+	$salt = substr(str_shuffle($rand_salt), 0, $substr_salt);
+	$password = generate_hash($password, $salt);
+	$UserID = mysqli_fetch_array(mysqli_query($mysql_con, "SELECT uid FROM members ORDER BY uid DESC LIMIT 1"))[0] + 1; // Sets new UID to next UID in sort order
+	email_registration($email);
+	return mysqli_query($mysql_con, "INSERT INTO members (date, IP, type, salt, password, uid, email) VALUES ('$date', '$ip', '$type', '$salt', '$password', '$UserID', '$email')");
+}
+
+/**
+ * Returns whether the given email, password, and re-entered password are valid.
+ * Note: this function assumes that the given email is SQL-safe.
+ * @param string $password the given password
+ * @param string $repassword the given re-entered password
+ * @param string $email the given email
+ */
+function valid_registration($password, $repassword, $email) // TODO: accept other email domains
+{
+	global $mysql_con;
+	$email_query = mysqli_query($mysql_con, "SELECT * FROM members WHERE email='$email'");
+	return !(mysqli_num_rows($email_query) || !preg_match('#[a-zA-Z0-9_]+#i', $email) || strlen($password) < 7 || strlen($password) > 100 || $password != $repassword);
+}
+
+/**
+ * Returns the registration error corresponding to the given problematic password or email.
+ * Note: this function assumes that the given email is SQL-safe.
+ * @param string $password the given password
+ * @param string $repassword the given re-entered password
+ * @param string $email the given email
+ * @return string the error message
+ */
+function registration_error($password, $repassword, $email) // TODO: generalise
+{
+	global $mysql_con;
+	$email_query = mysqli_query($mysql_con, "SELECT * FROM members WHERE email='$email'");
+	$error = "There was a problem with your registration: <ul>";
+	if (mysqli_num_rows($email_query))
+		$error .= "<li>The email you entered has already been registered.</li>";
+	if (!preg_match('#[a-zA-Z0-9]+#i', $email))
+		$error .= "<li>The email you entered was invalid; the correct format is NetID@princeton.edu.</li>";
+	if (strlen($password) < 7 || strlen($password) > 100)
+		$error .= "<li>Your password must be between 7 and 100 characters long.</li>";
+	if ($password != $repassword)
+		$error .= "<li>The two entered passwords did not match.</li>";
+	
+	return $error."</ul>";
+}
+
+/**
+ * Returns whether the given email is registered.
+ * Note: this function assumes that the given email is SQL-safe.
+ * @param string $email the given email
+ */
+function registered($email)
+{
+	global $mysql_con;
+	$query = mysqli_query($mysql_con, "SELECT * FROM members WHERE email='$email'");
+	if (mysqli_num_rows($query))
+		return true;
+}
+
+/**
+ * Sends a verification email for registration to the given email address.
+ * Note: this function assumes that the given email is SQL-safe.
+ * @param string $email the given email address
+ */
+function email_registration($email)
+{
+	global $mysql_con;
+	$end = strpos($email, '@');
+	$name = substr($email, 0, $end);
+	$rand = substr(str_shuffle($rand_gen), 0, $substr_gen);
+	mysqli_query($mysql_con, "INSERT INTO verification_codes (email, code) VALUES ('$email', '$rand')");
+	$to		 = $email;
+	$subject = 'PSPS Portal registration confirmation';
+	$message = "Hello $name,<br /><br />Thank you for signing up at the PSPS Portal, Princeton Society of Physics Students' online network and interstudent Q&A platform, open only to members of the Princeton University community. Its advantage is in having the ability to handle mentorship and mentoring requests from anyone who signs up. Every few weeks videos or other educational content containing physics-related topics will be posted, with the ability to discuss each of them, as well as to pose anonymous general questions about PSPS or the Physics Department to the officers. <br />Please hit the link below to confirm your e-mail and begin using the Portal!<br /><br />http://psps.mycpanel.princeton.edu/?code=".$rand.'&email='.$email."<br /><br />Thank you,<br />Pavel Shibayev '15<br />Physics Department<br />PSPS secretary/Portal developer<br /><br />If you'd like to unsubscribe, please go here: http://psps.mycpanel.princeton.edu/?action=unsubscribe&email=$email.";
+	$headers = 'From: The PSPS Portal Administrator <do-not-reply@psps.mycpanel.princeton.edu>' . "\r\n";
+	$headers .= "Content-type: text/html; charset=iso-8859-1\r\n";
+	$headers .= "List-Unsubscribe: http://psps.mycpanel.princeton.edu/?action=unsubscribe&email=$email";
+	mail($to, $subject, $message, $headers);
+	create_alert("Verification email sent.", 'info');
+}
+
+/**
+ * Verifies that the given verification code corresponds to the given email address.
+ * Note: this function assumes that the given verification code and email are SQL-safe.
+ * @param string $code the given verification code
+ * @param string $email the given email address
+ */
+function verify($code, $email)
+{
+	global $mysql_con;
+	$query = mysqli_query($mysql_con, "SELECT * FROM verification_codes WHERE code='$code' AND email='$email'");
+	if (mysqli_num_rows($query))
+	{
+		mysqli_query($mysql_con,"UPDATE members SET type=2 WHERE email='$email'");
+		echo "<script>alert('Your account has been validated; explore the PSPS Portal now!');</script>";
+	}
+}
+
+/** Returns whether the current user has been verified. */
+function verified()
+{
+	global $mysql_con;
+	$UserID = safe($_COOKIE["Plink_uid"], 'sql');
+	if (is_numeric($UserID))
+	{
+		$query = mysqli_query($mysql_con, "SELECT * FROM members WHERE uid=$UserID AND type!=3");
+		if (mysqli_num_rows($query))
+			return true;
+	}
+}
+
+/**
+ * Sends a password-reset email to the given email address.
+ * @param string $email the given email address
+ */
+function email_reset($email)
+{
+	global $mysql_con;
+	$end = strpos($email, '@');
+	$name = substr($email, 0, $end);
+	$rand = substr(str_shuffle($rand_gen), 0, $substr_gen);
+	mysqli_query($mysql_con, "INSERT INTO reset_codes VALUES ('$rand')");
+	$to		 = $email;
+	$subject = 'PSPS Portal password reset';
+	$message = "Hello $name,<br /><br />To reset your password, please visit the following link: http://psps.mycpanel.princeton.edu/reset.php?reset=true&code=$rand&email=$email.";
+	$headers = 'From: The PSPS Portal Administrator <do-not-reply@psps.mycpanel.princeton.edu>' . "\r\n";
+	$headers .= "Content-type: text/html; charset=iso-8859-1\r\n";
+	$headers .= "List-Unsubscribe: http://psps.mycpanel.princeton.edu/?action=unsubscribe&email=$email";
+	mail($to, $subject, $message, $headers);
+	create_alert("Password-reset email sent.", 'info');
+}
+
+/**
+ * Resets the password for the user registered under the given email
+ * to the given new password, if the given verification code is correct.
+ * Note: this function assumes that the given verification code and email are SQL-safe.	
+ * @param string $code the given verification code
+ * @param string $email the given email
+ * @param string $new_password the given new password
+ * @return string the status message for whether the password was reset successfully
+ */
+function reset_password($code, $email, $new_password) // XXX: This does not work
+{
+	global $mysql_con;
+	$code_query = mysqli_query($mysql_con, "SELECT * FROM reset_codes WHERE email='$email' AND code='$code'");
+	if (mysqli_num_rows($code_query))
+	{
+		$salt = substr(str_shuffle($rand_salt), 0, $substr_salt);
+		$password = generate_hash($password, $salt);
+		mysqli_query($mysql_con, "UPDATE members SET password='$password' WHERE email='$email'");
+		create_alert("Your password was successfully reset!", 'success');
+	}
+	else
+		create_alert("That code was not found in the database. Please try to reset your password again.", 'warning');
+}
+
+
+/**********************************
+ * Question and answer functions  *
+ *                                *
+ **********************************/
+
 /**
  * 
  * @param string $title
  * @param string $content
  */
-function add_question($title, $content)
+function add_question($title, $content) // Note: don't worry about this
 {
 	global $mysql_con;
 	$QuestionID_query = mysqli_fetch_array(mysqli_query($mysql_con, "SELECT qid FROM questions ORDER BY qid LIMIT 1"));
-		 $QuestionID = $QuestionID_query[0]+1;
+	$QuestionID = $QuestionID_query[0]+1;
 	$author = $_COOKIE["Plink_uid"];
-	mysqli_query($mysql_con, "INSERT INTO questions (title, content, qid, author_id) VALUES ('$title', '$content', $QuestionID, '$author')");
+	mysqli_query($mysql_con, "INSERT INTO questions (title, content, qid, author_id) VALUES ('".safe($title, 'sql').", ".$content.", ".$QuestionID.", ".$author.")");
 }
 
 /**
@@ -504,41 +616,17 @@ function administrator()
 	}
 }
 
-/**
- * 
- * @return boolean
- */
-function validated()
-{
-	global $mysql_con;
-	$UserID = $_COOKIE["Plink_uid"];
-	if (is_numeric($UserID))
-	{
-		$query = mysqli_query($mysql_con, "SELECT * FROM members WHERE uid=$UserID AND type!=3");
-		if (mysqli_num_rows($query))
-			return true;
-	}
-}
 
-/**
- * 
- * @param string $email
- * @return boolean
- */
-function registered($email)
-{
-	global $mysql_con;
-	$email = safe($email, "sql");
-	$query = mysqli_query($mysql_con, "SELECT * FROM members WHERE email='$email'");
-	if (mysqli_num_rows($query))
-		return true;
-}
+/**********************************
+ * Utility functions              *
+ *                                *
+ **********************************/
 
 /**
  * Returns a hash generated from the given password and salt
  * @param string $password the given password
  * @param string $salt the given salt
- * @return the generated hash string
+ * @return string the generated hash
  */
 function generate_hash($password, $salt)
 {
@@ -550,9 +638,8 @@ function generate_hash($password, $salt)
 }
 
 /**
- * 
- * @param string $username
- * @return unknown
+ * Returns the salt for the given username.
+ * @param string $username the given username
  */
 function get_salt($username)
 {
@@ -563,9 +650,8 @@ function get_salt($username)
 }
 
 /**
- * 
- * @param string $UserId
- * @return string
+ * Returns the username corresponding to the given netid.
+ * @param string UserId the given netid
  */
 function get_username($UserId)
 {		 
@@ -595,11 +681,11 @@ function get_title($id)
 }
 
 /**
- * 
- * @param string $UserId
- * @return string
+ * Returns the user id corresponding to the given netid
+ * @param string $UserId the given netid
+ * @param string the user id
  */
-function get_id($UserId)
+function get_id($UserId) // TODO: fix to work with non-Princeton emails
 {		 
 	global $mysql_con;
 	$UserId = "$UserId@princeton.edu";
@@ -611,65 +697,10 @@ function get_id($UserId)
 }
 
 /**
- * 
- * @param string $email
- */
-function email_registrations($email)
-{
-	global $mysql_con;
-	$end = strpos($email, '@');
-	$name = substr($email, 0, $end);
-	$rand = substr(str_shuffle("AaBbCcDdEeFfGgHhIIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz"), 0, 10);
-	mysqli_query($mysql_con, "INSERT INTO verification_codes VALUES ('$rand')");
-	$to		= $email;
-	$subject = 'PSPS Portal registration confirmation';
-	$message = "Hello $name,<br /><br />Thank you for signing up at the PSPS Portal, Princeton Society of Physics Students' online network and interstudent Q&A platform, open only to members of the Princeton University community. Its advantage is in having the ability to handle mentorship and mentoring requests from anyone who signs up. Every few weeks videos or other educational content containing physics-related topics will be posted, with the ability to discuss each of them, as well as to pose anonymous general questions about PSPS or the Physics Department to the officers. <br />Please hit the link below to confirm your e-mail and begin using the Portal!<br /><br />http://psps.mycpanel.princeton.edu/?code=".$rand.'&email='.$email."<br /><br />Thank you,<br />Pavel Shibayev '15<br />Physics Department<br />PSPS secretary/Portal developer<br /><br />If you'd like to unsubscribe, please go here: http://psps.mycpanel.princeton.edu/?action=unsubscribe&email=$email.";
-	$headers = 'From: The PSPS Portal Administrator <do-not-reply@psps.mycpanel.princeton.edu>' . "\r\n";
-	$headers .= "Content-type: text/html; charset=iso-8859-1\r\n";
-	$headers .= "List-Unsubscribe: http://psps.mycpanel.princeton.edu/?action=unsubscribe&email=$email";
-	mail($to, $subject, $message, $headers);
-}
-
-/**
- * 
- * @param string $email
- */
-function email_reset($email)
-{
-	global $mysql_con;
-	$end = strpos($email, '@');
-	$name = substr($email, 0, $end);
-	$rand = substr(str_shuffle("AaBbCcDdEeFfGgHhIIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz"), 0, 10);
-	mysqli_query($mysql_con, "INSERT INTO reset_codes VALUES ('$rand')");
-	$to		= $email;
-	$subject = 'PSPS Portal password reset';
-	$message = "Hello $name,<br /><br />To reset your password, please visit the following link: http://psps.mycpanel.princeton.edu/reset.php?reset=true&code=$rand&email=$email.";
-	$headers = 'From: The PSPS Portal Administrator <do-not-reply@psps.mycpanel.princeton.edu>' . "\r\n";
-	$headers .= "Content-type: text/html; charset=iso-8859-1\r\n";
-	$headers .= "List-Unsubscribe: http://psps.mycpanel.princeton.edu/?action=unsubscribe&email=$email";
-	mail($to, $subject, $message, $headers);
-}
-
-/**
- * Verifies that the given verification code corresponds to the given email address.
- * @param string $code the given verification code
- * @param string $email the given email address
- */
-function verify($code, $email)
-{
-	global $mysql_con;
-	$query = mysqli_query($mysql_con, "SELECT * FROM verification_codes WHERE code='$code'");
-	if (mysqli_num_rows($query))
-	{
-		mysqli_query($mysql_con,"UPDATE members SET type=2 WHERE email='$email'");
-		echo "<script>alert('Your account has been validated; explore the PSPS Portal now!');</script>";
-	}
-}
-
-/**
  * Converts the given input string to a safe string by escaping all relevant characters of the given language (SQL or HTML).
  * @param string $input the given input string
  * @param string $method the given language
+ * @return string the converted safe string
  */
 function safe($input, $method)
 {
@@ -702,7 +733,7 @@ function insert_stats()
  * Flashes the specified message with the given alert type.
  * @param string message the message type
  * @param string type the alert type
- * @return the alert type
+ * @return string the alert type
  */
 function create_alert($message, $type)
 {
