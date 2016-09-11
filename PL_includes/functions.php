@@ -136,11 +136,11 @@ function registration_error($password, $repassword, $email) // TODO: generalise
 	if (mysqli_num_rows($email_query))
 		$error .= "<li>The email you entered has already been registered.</li>";
 	if (!preg_match('#[a-zA-Z0-9]+#i', $email))
-		$error .= "<li>The email you entered was invalid; the correct format is NetID@princeton.edu.</li>";
+		$error .= "<li>The email you entered is invalid; the correct format is NetID@princeton.edu.</li>";
 	if (strlen($password) < 7 || strlen($password) > 100)
 		$error .= "<li>Your password must be between 7 and 100 characters long.</li>";
 	if ($password != $repassword)
-		$error .= "<li>The two entered passwords did not match.</li>";
+		$error .= "<li>The two entered passwords do not match.</li>";
 	
 	return $error."</ul>";
 }
@@ -228,31 +228,45 @@ function email_reset($email)
 	$headers .= "Content-type: text/html; charset=iso-8859-1\r\n";
 	$headers .= "List-Unsubscribe: http://psps.mycpanel.princeton.edu/?action=unsubscribe&email=$email";
 	mail($to, $subject, $message, $headers);
-//	create_alert("Password-reset email sent.", 'info');
+	create_alert("Password-reset email sent.", 'info');
+}
+
+/**
+ * Returns whether the given verification code is valid for password reset on the given email.
+ * Note: this function assumes that the given verification code and email are SQL-safe.
+ * @param string $code the given verification code
+ * @param string $email the given email
+ * @return boolean
+ */
+function verify_reset($code, $email)
+{
+	global $mysql_con, $rand_salt, $substr_salt;
+	$code_query = mysqli_query($mysql_con, "SELECT * FROM reset_codes WHERE email='$email' AND code='$code'");
+	if (!mysqli_num_rows($code_query))
+		create_alert("That code is incorrect. Please try to reset your password again.", 'danger');
 }
 
 /**
  * Resets the password for the user registered under the given email
- * to the given new password, if the given verification code is correct.
- * Note: this function assumes that the given verification code and email are SQL-safe.	
- * @param string $code the given verification code
+ * to the given new password.
+ * Note: this function assumes that the given email is SQL-safe.
  * @param string $email the given email
  * @param string $new_password the given new password
  * @return string the status message for whether the password was reset successfully
  */
-function reset_password($code, $email, $new_password) // XXX: This does not work
+function reset_password($email, $new_password, $re_new_password) // TODO: Limit the number of code attempts
 {
-	global $mysql_con, $rand_salt, $substr_salt;
-	$code_query = mysqli_query($mysql_con, "SELECT * FROM reset_codes WHERE email='$email' AND code='$code'");
-	if (mysqli_num_rows($code_query))
+	global $mysql_con;
+	if (valid_registration($new_password, $re_new_password, $email.'asdf'))
 	{
 		$salt = substr(str_shuffle($rand_salt), 0, $substr_salt);
 		$password = generate_hash($password, $salt);
 		mysqli_query($mysql_con, "UPDATE members SET password='$password' WHERE email='$email'");
+		mysqli_query($mysql_con, "DELETE FROM reset_codes WHERE email='$email'");
 		create_alert("Your password was successfully reset!", 'success');
 	}
 	else
-		create_alert("That code was not found in the database. Please try to reset your password again.", 'warning');
+		registration_error($new_password, $re_new_password, $email.'asdf');
 }
 
 

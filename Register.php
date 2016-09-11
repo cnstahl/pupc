@@ -23,7 +23,5 @@ if ($submit)
 if ($register_result == "success")
 	header('Location: index2.php');
 else
-	print $renderer->render('Register.php.twig', array(
-		'submit' => $submit
-	));
+	print $renderer->render('Register.php.twig', array());
 ?>
