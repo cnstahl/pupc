@@ -94,7 +94,7 @@ function logout()
  */
 function register($password, $email)
 {
-	global $mysql_con;
+	global $mysql_con, $rand_salt, $substr_salt;
 	date_default_timezone_set("America/New_York");
 	$date = date("d/m/Y");
 	$ip = $_SERVER["REMOTE_ADDR"]; 
@@ -165,19 +165,19 @@ function registered($email)
  */
 function email_registration($email)
 {
-	global $mysql_con;
+	global $mysql_con, $rand_gen, $substr_gen;
 	$end = strpos($email, '@');
 	$name = substr($email, 0, $end);
 	$rand = substr(str_shuffle($rand_gen), 0, $substr_gen);
 	mysqli_query($mysql_con, "INSERT INTO verification_codes (email, code) VALUES ('$email', '$rand')");
-	$to		 = $email;
+	$to      = $email;
 	$subject = 'PSPS Portal registration confirmation';
 	$message = "Hello $name,<br /><br />Thank you for signing up at the PSPS Portal, Princeton Society of Physics Students' online network and interstudent Q&A platform, open only to members of the Princeton University community. Its advantage is in having the ability to handle mentorship and mentoring requests from anyone who signs up. Every few weeks videos or other educational content containing physics-related topics will be posted, with the ability to discuss each of them, as well as to pose anonymous general questions about PSPS or the Physics Department to the officers. <br />Please hit the link below to confirm your e-mail and begin using the Portal!<br /><br />http://psps.mycpanel.princeton.edu/?code=".$rand.'&email='.$email."<br /><br />Thank you,<br />Pavel Shibayev '15<br />Physics Department<br />PSPS secretary/Portal developer<br /><br />If you'd like to unsubscribe, please go here: http://psps.mycpanel.princeton.edu/?action=unsubscribe&email=$email.";
-	$headers = 'From: The PSPS Portal Administrator <do-not-reply@psps.mycpanel.princeton.edu>' . "\r\n";
-	$headers .= "Content-type: text/html; charset=iso-8859-1\r\n";
+	$headers = "From: The PSPS Portal Administrator <noreply@psps.mycpanel.princeton.edu>\n";
+	$headers .= "Content-type: text/html; charset=iso-8859-1\n";
+	$headers .= "X-Mailer: PHP/" . phpversion() . "\n";
 	$headers .= "List-Unsubscribe: http://psps.mycpanel.princeton.edu/?action=unsubscribe&email=$email";
 	mail($to, $subject, $message, $headers);
-	create_alert("Verification email sent.", 'info');
 }
 
 /**
@@ -193,7 +193,7 @@ function verify($code, $email)
 	if (mysqli_num_rows($query))
 	{
 		mysqli_query($mysql_con,"UPDATE members SET type=2 WHERE email='$email'");
-		echo "<script>alert('Your account has been validated; explore the PSPS Portal now!');</script>";
+		create_alert('Your account has been verified. Explore the PSPS Portal now!', 'success');
 	}
 }
 
@@ -216,19 +216,19 @@ function verified()
  */
 function email_reset($email)
 {
-	global $mysql_con;
+	global $mysql_con, $rand_gen, $substr_gen;
 	$end = strpos($email, '@');
 	$name = substr($email, 0, $end);
 	$rand = substr(str_shuffle($rand_gen), 0, $substr_gen);
-	mysqli_query($mysql_con, "INSERT INTO reset_codes VALUES ('$rand')");
-	$to		 = $email;
+	mysqli_query($mysql_con, "INSERT INTO reset_codes (email, code) VALUES ('$email', '$rand')");
+	$to      = $email;
 	$subject = 'PSPS Portal password reset';
-	$message = "Hello $name,<br /><br />To reset your password, please visit the following link: http://psps.mycpanel.princeton.edu/reset.php?reset=true&code=$rand&email=$email.";
-	$headers = 'From: The PSPS Portal Administrator <do-not-reply@psps.mycpanel.princeton.edu>' . "\r\n";
+	$message = "Hello $name,<br /><br />To reset your password, please visit the following link: http://psps.mycpanel.princeton.edu/Reset.php?reset=true&code=$rand&email=$email.";
+	$headers = 'From: The PSPS Portal Administrator <noreply@psps.mycpanel.princeton.edu>' . "\r\n";
 	$headers .= "Content-type: text/html; charset=iso-8859-1\r\n";
 	$headers .= "List-Unsubscribe: http://psps.mycpanel.princeton.edu/?action=unsubscribe&email=$email";
 	mail($to, $subject, $message, $headers);
-	create_alert("Password-reset email sent.", 'info');
+//	create_alert("Password-reset email sent.", 'info');
 }
 
 /**
@@ -242,7 +242,7 @@ function email_reset($email)
  */
 function reset_password($code, $email, $new_password) // XXX: This does not work
 {
-	global $mysql_con;
+	global $mysql_con, $rand_salt, $substr_salt;
 	$code_query = mysqli_query($mysql_con, "SELECT * FROM reset_codes WHERE email='$email' AND code='$code'");
 	if (mysqli_num_rows($code_query))
 	{
@@ -724,7 +724,7 @@ function insert_stats()
 	$ua = $_SERVER["HTTP_USER_AGENT"];
 	$ref = $_SERVER["HTTP_REFERER"];
 	$uri = $_SERVER["REQUEST_URI"];
-	//email_registrations($email);
+	//email_registration($email);
 	mysqli_query($mysql_con, "INSERT INTO statistics (date, IP, ) VALUES ('$date', '$ip', '$type', '$salt', '$password', '$UserID', '$email')");
 	mysqli_query($mysql_con, "INSERT INTO statistics ()");
 }

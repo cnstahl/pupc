@@ -15,7 +15,7 @@ $renderer = new TemplateRenderer();
 // Verify that the registration form was submitted and that the email & password are correct
 if ($submit)
 	if (valid_registration($password, $repassword, $email) && register($password, $email))
-		$register_result = create_alert("Registered successfully!", "success");
+		$register_result = create_alert("Registered successfully! Verification email sent to $email.", "info");
 	else
 		$register_result = create_alert(registration_error($password, $repassword, $email), "danger");
 
