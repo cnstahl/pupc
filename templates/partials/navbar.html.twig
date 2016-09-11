@@ -1,7 +1,27 @@
 		<nav class="navbar navbar-default navbar-fixed-top hidden-print">
-			<div class="container-fluid">
+			<div class="container-fluid container">
 				<div class="navbar-header">
-					<a class="navbar-brand hidden-sm hidden-md hidden-lg" href="/"></a>
+					<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false">
+						<span class="sr-only">Toggle navigation</span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+					</button>
+					<a class="navbar-brand hidden-sm hidden-md hidden-lg" href="index2.php"></a>
+				</div>
+				<div class="collapse navbar-collapse" id="navbar">
+					<form class="navbar-form navbar-right hidden-xs" role="login">
+						<div class="form-group input-group-sm">
+							<input type="text" class="form-control" placeholder="Email">
+							<input type="text" class="form-control" placeholder="Password">
+						</div>
+						<button type="submit" name="login" class="btn btn-default btn-sm">Log in</button>
+					</form>
+					<ul class="nav navbar-nav">
+						<li><a href="">Learning Corner</a></li>
+						<li><a href="">Physics Connect</a></li>
+						<li><a href="">Mentoring Setup</a></li>
+					</ul>
 				</div>
 			</div>
 		</nav>
