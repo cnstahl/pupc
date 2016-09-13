@@ -30,6 +30,12 @@ class TemplateRenderer
 	public function render($templateFile, array $variables)
 	{
 		$variables['flashes'] = $this->flashes;
+		$variables['logged_in'] = logged_in();
+		if ($variables['logged_in'])
+		{
+			$UserID = safe($_COOKIE["Plink_uid"], 'sql');
+			variables['user_email'] = get_id($UserID);
+		}
 		return $this->environment->render($templateFile, $variables);
 	}
 }

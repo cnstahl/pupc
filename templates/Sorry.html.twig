@@ -1,0 +1,9 @@
+{% extends "layout.html.twig" %}
+
+{% set title = "Insufficient Privileges" %}
+
+{% block body %}
+	{{ parent() }}
+	
+	<p>Sorry, you must have a validated e-mail address to use PSPS resources. Please <a href="Register.php">register</a> for an account.</p>
+{% endblock body %}

@@ -8,7 +8,7 @@ ob_start();
 
 // Create MySQL connection variable
 $mysql_con = mysqli_connect("localhost", "psps_platmin", "Zx2p?&d:+bbD", "psps_platform") or die(mysqli_connect_error());
-$flashes = array();
+$timezone = "America/New_York";
 $rand_sess = "NnOoPpQqRrSsTtUuVvWwXxYyZz0123456789";
 $rand_salt = "AABcDdeFgHJkLmNnoPqQrrSssTtuVwxYz12334567889";
 $substr_salt = 6;
@@ -29,13 +29,14 @@ $substr_gen = 10;
 function login($username, $password)
 {
 	global $mysql_con;
+	$ip = $_SERVER["REMOTE_ADDR"];
 	$SessID = str_shuffle($rand_sess);
 	setcookie("Psps_sess", $SessID);
 	$UserID_query = mysqli_fetch_array(mysqli_query($mysql_con, "SELECT uid FROM members WHERE email='$username'")) or die(mysqli_query($mysql_con));
 	$UserID = $UserID_query[0];
 	setcookie("Plink_uid", $UserID);
 	if (is_numeric($UserID))
-		mysqli_query($mysql_con, "UPDATE members SET session_id='$SessID' WHERE uid=$UserID") or die(mysqli_query($mysql_con));
+		mysqli_query($mysql_con, "UPDATE members SET session_id='$SessID', ip='$ip' WHERE uid=$UserID") or die(mysqli_query($mysql_con));
 }
 
 /**
@@ -64,6 +65,7 @@ function logged_in()
 		if (mysqli_num_rows($query))
 			return true;
 	}
+	return false;
 }
 
 /** Logs out the current user. */
@@ -95,9 +97,9 @@ function logout()
 function register($password, $email)
 {
 	global $mysql_con, $rand_salt, $substr_salt;
-	date_default_timezone_set("America/New_York");
+	date_default_timezone_set($timezone);
 	$date = date("d/m/Y");
-	$ip = $_SERVER["REMOTE_ADDR"]; 
+	$ip = $_SERVER["REMOTE_ADDR"];
 	$type = 3;
 	$salt = substr(str_shuffle($rand_salt), 0, $substr_salt);
 	$password = generate_hash($password, $salt);
@@ -211,6 +213,29 @@ function verified()
 }
 
 /**
+ * Registers the given uid for the PUPC of the given year, with given aid option and note.
+ * Note: this function assumes that the given email is SQL-safe.
+ * @param string $uid the given uid
+ * @param string $aid the given aid option
+ * @param string $note the given note
+ * @param int $year the given year
+ * @return boolean whether the registration was successful
+ */
+function register_PUPC($uid, $aid, $note, $year)
+{
+	global $mysql_con;
+	date_default_timezone_set($timezone);
+	$date = date("d/m/Y");
+	return mysqli_query($mysql_con, "INSERT INTO pupc_$year (date, uid, aid, note) VALUES ('$date', '$uid', '$aid', '$note')");
+}
+
+
+/**********************************
+ * Reset functions                *
+ *                                *
+ **********************************/
+
+/**
  * Sends a password-reset email to the given email address.
  * @param string $email the given email address
  */
@@ -301,7 +326,7 @@ function add_answer($content)
 	$PostID = $PostID_query[0]+1;
 	$author = $_COOKIE["Plink_uid"];
 	$question = mysqli_real_escape_string($mysql_con, $_GET["question"]);
-	date_default_timezone_set("America/New_York");
+	date_default_timezone_set($timezone);
 	$date = date("d/m/Y");
 	//Note that type 1 = The Connection, and type 2 = Debates
 	mysqli_query($mysql_con, "INSERT INTO responses (type, content, post_id, author_id, question, date) VALUES (1, '$content', $PostID, '$author', '$question', '$date')");
@@ -521,7 +546,7 @@ function add_response($content, $yn)
 	$PostID = $PostID_query[0]+1;
 	$author = $_COOKIE["Plink_uid"];
 	$debate = $_GET["debate"];
-	date_default_timezone_set("America/New_York");
+	date_default_timezone_set($timezone);
 	$date = date("d/m/Y");
 	//Note that type 1 = The Connection, type 2 = Debates
 	mysqli_query($mysql_con, "INSERT INTO responses (type, content, post_id, author_id, question, date, yn) VALUES (2, '$content', $PostID, '$author', '$debate', '$date', $yn)");
@@ -539,7 +564,7 @@ function send_message($recipient, $subject, $message)
 	$MessageID_query = mysqli_fetch_array(mysqli_query($mysql_con, "SELECT message_id FROM messages ORDER BY message_id LIMIT 1"), MYSQLI_NUM);
 	$MessageID = $MessageID_query[0]+1;
 	$sender = $_COOKIE["Plink_uid"];
-	date_default_timezone_set("America/New_York");
+	date_default_timezone_set($timezone);
 	$date = date("d/m/Y");
 	mysqli_query($mysql_con, "INSERT INTO messages (message_id, recipient, sender, subject, content, date) VALUES ($MessageID, '$recipient', '$sender', '$subject', '$message', '$date')") or die(mysqli_error($mysql_con));
 }
@@ -557,7 +582,7 @@ function add_reply($parent, $message)
 	$sender = $_COOKIE["Plink_uid"];
 	$parent = (int)$parent;
 	$message = safe($message, "sql");
-	date_default_timezone_set("America/New_York");
+	date_default_timezone_set($timezone);
 	$date = date("d/m/Y");
 	mysqli_query($mysql_con, "INSERT INTO messages (message_id, sender, content, date, parent_id) VALUES ($MessageID, '$sender', '$message', '$date', '$parent')") or die(mysqli_error($mysql_con));
 }
@@ -573,7 +598,7 @@ function display_responses($debate)
 	while ($content = mysqli_fetch_array($ans_query, MYSQLI_NUM))
 	{
 		$contents = safe($content[0], "html");
-		date_default_timezone_set("America/New_York");
+		date_default_timezone_set($timezone);
 		$date = safe($content[1], "html");
 		$uid = $content[2];
 		$username = get_username($content[2]);
@@ -733,7 +758,7 @@ function safe($input, $method)
 function insert_stats()
 {
 	global $mysql_con;
-	date_default_timezone_set("America/New_York");
+	date_default_timezone_set($timezone);
 	$date = date("d/m/Y");
 	$ip = $_SERVER["REMOTE_ADDR"]; 
 	$ua = $_SERVER["HTTP_USER_AGENT"];

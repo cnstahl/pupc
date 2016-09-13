@@ -2,7 +2,7 @@
 	//Set login variables
 	$login_submit = $_POST["submit"];
 	$login_name = safe($_POST["email"], "sql");
-	$login_pass = $_POST["pass"];
+	$login_pass = $_POST["password"];
 
 	//Verify that the login was submitted and that the username & password are correct 
 	if ($login_submit && valid_login($login_name, $login_pass))
