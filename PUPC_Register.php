@@ -1,6 +1,6 @@
 <?php
-// Include prerequisite file
-include($_SERVER['DOCUMENT_ROOT']."/PL_includes/functions.php");
+require_once $_SERVER['DOCUMENT_ROOT'].'/TemplateRenderer.php';
+$renderer = new TemplateRenderer();
 
 // PUPC year
 $year = 2016; // Be sure to make the database table before updating this value
@@ -9,9 +9,6 @@ $year = 2016; // Be sure to make the database table before updating this value
 $submit = $_POST["submit"];
 $aid = $_POST["aid"];
 $note = $_POST["note"];
-
-require_once $_SERVER['DOCUMENT_ROOT'].'/TemplateRenderer.php';
-$renderer = new TemplateRenderer();
 
 // Must be authenticated to register
 if (!logged_in() || !verified())
