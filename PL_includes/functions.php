@@ -210,7 +210,7 @@ function verified()
 	$UserID = safe($_COOKIE["Plink_uid"], 'sql');
 	if (is_numeric($UserID))
 	{
-		$query = mysqli_query($mysql_con, "SELECT * FROM members WHERE uid=$UserID AND type == 2");
+		$query = mysqli_query($mysql_con, "SELECT * FROM members WHERE uid=$UserID AND type=2");
 		return (mysqli_num_rows($query) == 1);
 	}
 }
@@ -228,8 +228,8 @@ function register_PUPC($uid, $aid, $note, $year)
 {
 	global $mysql_con;
 	date_default_timezone_set($timezone);
-	$date = date("d/m/Y");
-	return mysqli_query($mysql_con, "INSERT INTO pupc_$year (date, uid, aid, note) VALUES ('$date', '$uid', '$aid', '$note')");
+	$date = date("Ymd H:i:s");
+	return mysqli_query($mysql_con, "INSERT INTO pupc_$year (date, uid, aid, notes) VALUES ('$date', $uid, $aid, '$note')");
 }
 
 
