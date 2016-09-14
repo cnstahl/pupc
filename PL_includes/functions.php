@@ -231,7 +231,7 @@ function register_PUPC($uid, $format, $type, $aid, $note, $year)
 	$date = date("Ymd H:i:s");
 	$status = mysqli_query($mysql_con, "INSERT INTO pupc_$year (date, uid, online, individual, aid, notes) VALUES ('$date', $uid, $format, $type, $aid, '$note')");
 	if ($status)
-		email_PUPC_confirmation(get_email($uid), $year);
+		email_PUPC_confirmation(get_email($uid), $format, $type, $year);
 	return $status;
 }
 
@@ -241,14 +241,18 @@ function register_PUPC($uid, $format, $type, $aid, $note, $year)
  * @param string $email the given email address
  * @param string $year the given year
  */
-function email_PUPC_confirmation($email, $year)
+function email_PUPC_confirmation($email, $format, $type, $year)
 {
 	global $mysql_con;
 	$end = strpos($email, '@');
 	$name = substr($email, 0, $end);
+	$format = ($format == 1) ?   "on-site event" : "online part";
+	$type = ($type == 1) ?   "an individual participant" : "a team";
 	$to      = $email;
 	$subject = "PUPC $year registration confirmation";
-	$message = "Hello $name,<br /><br />This is a confirmation that you have registered for PUPC $year. Thank you,<br />Pavel Shibayev '15<br />Physics Department<br />PSPS secretary/Portal developer";
+	$message = "Hello $name,<br /><br />Thank you for registering for the $format of PUPC $year! This e-mail confirms that you have successfully registered as $type.";
+//	$message .= "and your ID is 16<continent code><country ISO code><index from within country>.";
+	$message .= "We look forward to your participation!<br /><br />Best wishes,<br />PUPC Organizers";
 	$headers = "From: The PSPS Portal Administrator <noreply@psps.mycpanel.princeton.edu>\n";
 	$headers .= "Content-type: text/html; charset=iso-8859-1\n";
 	$headers .= "X-Mailer: PHP/" . phpversion() . "\n";
