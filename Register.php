@@ -1,6 +1,6 @@
 <?php
-// Include prerequisite file
-include("./PL_includes/functions.php");
+require_once 'TemplateRenderer.php';
+$renderer = new TemplateRenderer();
 
 // Set registration variables
 $submit = $_POST["submit"];
@@ -8,9 +8,6 @@ $password = $_POST["password"];
 $repassword = $_POST["repassword"];
 $email = safe($_POST["email"], "sql")."@princeton.edu";
 $username = safe($_POST["username"], "sql");
-
-require_once 'TemplateRenderer.php';
-$renderer = new TemplateRenderer();
 
 // Verify that the registration form was submitted and that the email & password are correct
 if ($submit)

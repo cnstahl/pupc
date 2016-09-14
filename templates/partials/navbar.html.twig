@@ -9,34 +9,36 @@
 					</button>
 					<a class="navbar-brand hidden-sm hidden-md hidden-lg" href="index2.php"></a>
 				</div>
-				<div class="collapse navbar-collapse" id="navbar">
-{% if logged_in %}
-					<form class="navbar-form navbar-right hidden-xs" role="login">
-						<div class="form-group input-group-sm">
-							<input type="text" class="form-control" name="email" placeholder="Email">
-							<input type="password" class="form-control" name="password" placeholder="Password">
-						</div>
-						<button type="submit" name="login" class="btn btn-default btn-sm">Log in</button>
-					</form>
+				<div class="container-fluid">
+					<div class="collapse navbar-collapse" id="navbar">
+{% if not logged_in %}
+						<form class="navbar-form navbar-right hidden-xs" role="form" action="PL_includes/login.php" method="post">
+							<div class="form-group input-group-sm">
+								<input type="text" class="form-control" name="email" placeholder="Email">
+								<input type="password" class="form-control" name="password" placeholder="Password">
+							</div>
+							<button type="submit" name="submit" value="true" class="btn btn-default btn-sm">Log in</button>
+						</form>
 {% else %}
-					<p class="navbar-text navbar-right">Signed in as {{ user_email }}.</p>
+						<p class="navbar-text navbar-right">Signed in as {{ user_email }}. (<a href="?logout=true">Logout</a>)</p>
 {% endif %}
-					<ul class="nav navbar-nav">
-						<li><a href="">Learning Corner</a></li>
-						<li><a href="">Physics Connect</a></li>
-						<li><a href="">Mentoring Setup</a></li>
-						<li class="dropdown">
-							<a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">PUPC<span class="caret" /></a>
-							<ul class="dropdown-menu">
-								<li><a href="pupc/index.php">Home</a></li>
-								<li><a href="pupc/About.php">About</a></li>
-								<li><a href="pupc/Rules.php">Rules</a></li>
-								<li><a href="pupc/Register.php">Register</a></li>
-								<li><a href="pupc/Schedule.php">Schedule</a></li>
-								<li><a href="pupc/Contact.php">Contact</a></li>
-							</ul>
-						</li>
-					</ul>
+						<ul class="nav navbar-nav">
+							<li><a href="">Learning</a></li>
+							<li><a href="">Connect</a></li>
+							<li><a href="">Mentoring</a></li>
+							<li class="dropdown">
+								<a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">PUPC<span class="caret" /></a>
+								<ul class="dropdown-menu">
+									<li><a href="PUPC.php">Home</a></li>
+									<li><a href="PUPC_About.php">About</a></li>
+									<li><a href="PUPC_Rules.php">Rules</a></li>
+									<li><a href="PUPC_Register.php">Register</a></li>
+									<li><a href="PUPC_Schedule.php">Schedule</a></li>
+									<li><a href="PUPC_Contact.php">Contact</a></li>
+								</ul>
+							</li>
+						</ul>
+					</div>
 				</div>
 			</div>
 		</nav>

@@ -1,5 +1,4 @@
 <?php
-include("./PL_includes/functions.php");
 require_once 'TemplateRenderer.php';
 $renderer = new TemplateRenderer();
 
@@ -10,14 +9,14 @@ if ($_GET["code"] && $_GET["email"])
 	verify($code, $email);
 }
 
+/*
 if (!logged_in())
 	print $renderer->render('index.php.twig', array());
-if (!validated() && logged_in())
+else if (!verified())
 	header("Location: Sorry.php");
+*/
 if ($_GET["logout"])
-{
 	logout();
-	print $renderer->render('index.php.twig', array());
-}
+print $renderer->render('index.php.twig', array());
 
 ?>

@@ -1,6 +1,6 @@
 <?php
-// Include prerequisite file
-include("./PL_includes/functions.php");
+require_once 'TemplateRenderer.php';
+$renderer = new TemplateRenderer();
 
 // Set reset variables
 $submit = $_POST["submit"];
@@ -9,9 +9,6 @@ $code = safe($_POST["code"], "sql");
 $password = safe($_POST["password"], "sql");
 $repassword = safe($_POST["repassword"], "sql");
 $reset = false;
-
-require_once 'TemplateRenderer.php';
-$renderer = new TemplateRenderer();
 
 if ($_GET['reset'] == 'true') { // Verify code is correct: if it is, password blanks will be rendered
 	$email = safe($_GET['email'], 'sql');

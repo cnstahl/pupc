@@ -4,8 +4,6 @@
  * display_questions(), add_debate(), add_response(), display_debates(), display_responses()
  */
 
-ob_start();
-
 // Create MySQL connection variable
 $mysql_con = mysqli_connect("localhost", "psps_platmin", "Zx2p?&d:+bbD", "psps_platform") or die(mysqli_connect_error());
 $timezone = "America/New_York";
@@ -25,18 +23,21 @@ $substr_gen = 10;
  * Authenticates the user with given username and password.
  * @param string $username the given username
  * @param string $password the given password
+ * @return {@code true} if successful, {@code false} otherwise
  */
-function login($username, $password)
+function login($username, $password) // TODO: generalise this
 {
-	global $mysql_con;
+	global $mysql_con, $rand_sess;
+	$username .= '@princeton.edu';
 	$ip = $_SERVER["REMOTE_ADDR"];
 	$SessID = str_shuffle($rand_sess);
-	setcookie("Psps_sess", $SessID);
-	$UserID_query = mysqli_fetch_array(mysqli_query($mysql_con, "SELECT uid FROM members WHERE email='$username'")) or die(mysqli_query($mysql_con));
+	setcookie("Psps_sess", $SessID, 0, '/');
+	$UserID_query = mysqli_fetch_array(mysqli_query($mysql_con, "SELECT uid FROM members WHERE email='$username'")) or die(mysqli_error($mysql_con));
 	$UserID = $UserID_query[0];
-	setcookie("Plink_uid", $UserID);
+	setcookie("Plink_uid", $UserID, 0, '/');
 	if (is_numeric($UserID))
-		mysqli_query($mysql_con, "UPDATE members SET session_id='$SessID', ip='$ip' WHERE uid=$UserID") or die(mysqli_query($mysql_con));
+		mysqli_query($mysql_con, "UPDATE members SET session_id='$SessID', ip='$ip' WHERE uid=$UserID") or die(mysqli_error($mysql_con));
+	return true;
 }
 
 /**
@@ -45,9 +46,10 @@ function login($username, $password)
  * @param string $password the given password
  * @return int {@code 1} if it does, {@code 0} otherwise
  */
-function valid_login($username, $password)
+function valid_login($username, $password) // TODO: generalise
 {
 	global $mysql_con;
+	$username .= "@princeton.edu";
 	$password = generate_hash($password, get_salt($username));
 	$query = mysqli_query($mysql_con, "SELECT * FROM members WHERE password='$password' AND email='$username'") or die(mysqli_query($mysql_con));
 	return mysqli_num_rows($query);
@@ -76,8 +78,8 @@ function logout()
 	if (is_numeric($UserID))
 	{
 		mysqli_query($mysql_con, "UPDATE members SET session_id=NULL WHERE uid=$UserID") or die(mysqli_error($mysql_con));
-		setcookie("Plink_uid", "", time()-3600);
-		setcookie("Psps_sess", "", time()-3600);
+		setcookie("Plink_uid", "", time()-3600, '/');
+		setcookie("Psps_sess", "", time()-3600, '/');
 	}
 }
 
@@ -94,7 +96,7 @@ function logout()
  * @param string $email the given email
  * @return boolean whether the registration was successful
  */
-function register($password, $email)
+function register($password, $email) // TODO: generalise
 {
 	global $mysql_con, $rand_salt, $substr_salt;
 	date_default_timezone_set($timezone);
@@ -197,6 +199,8 @@ function verify($code, $email)
 		mysqli_query($mysql_con,"UPDATE members SET type=2 WHERE email='$email'");
 		create_alert('Your account has been verified. Explore the PSPS Portal now!', 'success');
 	}
+	else
+		create_alert("The verification code is invalid. Please try again.", 'info');
 }
 
 /** Returns whether the current user has been verified. */
@@ -206,9 +210,8 @@ function verified()
 	$UserID = safe($_COOKIE["Plink_uid"], 'sql');
 	if (is_numeric($UserID))
 	{
-		$query = mysqli_query($mysql_con, "SELECT * FROM members WHERE uid=$UserID AND type!=3");
-		if (mysqli_num_rows($query))
-			return true;
+		$query = mysqli_query($mysql_con, "SELECT * FROM members WHERE uid=$UserID AND type == 2");
+		return (mysqli_num_rows($query) == 1);
 	}
 }
 
@@ -282,7 +285,7 @@ function verify_reset($code, $email)
  */
 function reset_password($email, $new_password, $re_new_password) // TODO: Limit the number of code attempts
 {
-	global $mysql_con;
+	global $mysql_con, $rand_salt, $substr_salt;
 	if (valid_registration($new_password, $re_new_password, $email.'asdf'))
 	{
 		$salt = substr(str_shuffle($rand_salt), 0, $substr_salt);
@@ -681,7 +684,7 @@ function generate_hash($password, $salt)
  * Returns the salt for the given username.
  * @param string $username the given username
  */
-function get_salt($username)
+function get_salt($username) // TODO: generalise
 {
 	global $mysql_con;
 	$query = mysqli_query($mysql_con, "SELECT salt FROM members WHERE email='$username'") or die(mysqli_query($mysql_con));
@@ -693,7 +696,7 @@ function get_salt($username)
  * Returns the username corresponding to the given netid.
  * @param string UserId the given netid
  */
-function get_username($UserId)
+function get_username($UserId) // TODO: generalise
 {		 
 	global $mysql_con;
 	$UserId = (int)$UserId;

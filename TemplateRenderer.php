@@ -1,5 +1,6 @@
 <?php
-require_once '../php/Twig/Autoloader.php';
+include("./PL_includes/functions.php");
+require_once $_SERVER['DOCUMENT_ROOT'].'/../php/Twig/Autoloader.php';
 Twig_Autoloader::register();
 
 class TemplateRenderer
@@ -19,7 +20,7 @@ class TemplateRenderer
 			'strict_variables' => true,
 		);
 		$templateDirs = array_merge(
-			array('./templates'), // Base directory with all templates
+			array($_SERVER['DOCUMENT_ROOT'].'/templates'), // Base directory with all templates
 			$templateDirs
 		);
 		$this->loader = new Twig_Loader_Filesystem($templateDirs);
@@ -34,7 +35,7 @@ class TemplateRenderer
 		if ($variables['logged_in'])
 		{
 			$UserID = safe($_COOKIE["Plink_uid"], 'sql');
-			variables['user_email'] = get_id($UserID);
+			$variables['user_email'] = get_username($UserID);
 		}
 		return $this->environment->render($templateFile, $variables);
 	}
