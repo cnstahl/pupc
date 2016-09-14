@@ -25,10 +25,9 @@ $substr_gen = 10;
  * @param string $password the given password
  * @return {@code true} if successful, {@code false} otherwise
  */
-function login($username, $password) // TODO: generalise this
+function login($username, $password)
 {
 	global $mysql_con, $rand_sess;
-	$username .= '@princeton.edu';
 	$ip = $_SERVER["REMOTE_ADDR"];
 	$SessID = str_shuffle($rand_sess);
 	setcookie("Psps_sess", $SessID, 0, '/');
@@ -46,10 +45,9 @@ function login($username, $password) // TODO: generalise this
  * @param string $password the given password
  * @return int {@code 1} if it does, {@code 0} otherwise
  */
-function valid_login($username, $password) // TODO: generalise
+function valid_login($username, $password)
 {
 	global $mysql_con;
-	$username .= "@princeton.edu";
 	$password = generate_hash($password, get_salt($username));
 	$query = mysqli_query($mysql_con, "SELECT * FROM members WHERE password='$password' AND email='$username'") or die(mysqli_query($mysql_con));
 	return mysqli_num_rows($query);
@@ -96,7 +94,7 @@ function logout()
  * @param string $email the given email
  * @return boolean whether the registration was successful
  */
-function register($password, $email) // TODO: generalise
+function register($password, $email)
 {
 	global $mysql_con, $rand_salt, $substr_salt;
 	date_default_timezone_set($timezone);
@@ -229,7 +227,31 @@ function register_PUPC($uid, $aid, $note, $year)
 	global $mysql_con;
 	date_default_timezone_set($timezone);
 	$date = date("Ymd H:i:s");
-	return mysqli_query($mysql_con, "INSERT INTO pupc_$year (date, uid, aid, notes) VALUES ('$date', $uid, $aid, '$note')");
+	$status = mysqli_query($mysql_con, "INSERT INTO pupc_$year (date, uid, aid, notes) VALUES ('$date', $uid, $aid, '$note')");
+	if ($status)
+		email_PUPC_confirmation(get_email($uid), $year);
+	return $status;
+}
+
+/**
+ * Sends a confirmation email of PUPC registration of the given year to the given email address.
+ * Note: this function assumes that the given email is SQL-safe.
+ * @param string $email the given email address
+ * @param string $year the given year
+ */
+function email_PUPC_confirmation($email, $year)
+{
+	global $mysql_con;
+	$end = strpos($email, '@');
+	$name = substr($email, 0, $end);
+	$to      = $email;
+	$subject = "PUPC $year registration confirmation";
+	$message = "Hello $name,<br /><br />This is a confirmation that you have registered for PUPC $year. Thank you,<br />Pavel Shibayev '15<br />Physics Department<br />PSPS secretary/Portal developer";
+	$headers = "From: The PSPS Portal Administrator <noreply@psps.mycpanel.princeton.edu>\n";
+	$headers .= "Content-type: text/html; charset=iso-8859-1\n";
+	$headers .= "X-Mailer: PHP/" . phpversion() . "\n";
+	$headers .= "List-Unsubscribe: http://psps.mycpanel.princeton.edu/?action=unsubscribe&email=$email";
+	mail($to, $subject, $message, $headers);
 }
 
 
@@ -265,7 +287,7 @@ function email_reset($email)
  * @param string $email the given email
  * @return boolean
  */
-function verify_reset($code, $email)
+function verify_reset($code, $email) // TODO: Add time limit for resetting
 {
 	global $mysql_con, $rand_salt, $substr_salt;
 	$code_query = mysqli_query($mysql_con, "SELECT * FROM reset_codes WHERE email='$email' AND code='$code'");
@@ -684,7 +706,7 @@ function generate_hash($password, $salt)
  * Returns the salt for the given username.
  * @param string $username the given username
  */
-function get_salt($username) // TODO: generalise
+function get_salt($username)
 {
 	global $mysql_con;
 	$query = mysqli_query($mysql_con, "SELECT salt FROM members WHERE email='$username'") or die(mysqli_query($mysql_con));
@@ -693,19 +715,27 @@ function get_salt($username) // TODO: generalise
 }
 
 /**
- * Returns the username corresponding to the given netid.
+ * Returns the email corresponding to the given user ID.
  * @param string UserId the given netid
  */
-function get_username($UserId) // TODO: generalise
+function get_email($UserId)
 {		 
 	global $mysql_con;
 	$UserId = (int)$UserId;
 	$query = mysqli_query($mysql_con, "SELECT email FROM members WHERE uid=$UserId") or die(mysqli_query($mysql_con));
-	$username_array = mysqli_fetch_array($query);
-	$username = $username_array[0];
-	$end = strpos($username, '@');
-	$username = substr($username,0,$end);
-	return $username;
+	$email_array = mysqli_fetch_array($query);
+	return $email_array[0];
+}
+
+/**
+ * Returns the "username" corresponding to the given user ID.
+ * @param string UserId the given netid
+ */
+function get_username($UserId)
+{		 
+	$email = get_email($UserID);
+	$end = strpos($email, '@');
+	return substr($email, 0, $end);
 }
 
 /**
@@ -724,14 +754,13 @@ function get_title($id)
 }
 
 /**
- * Returns the user id corresponding to the given netid
- * @param string $UserId the given netid
- * @param string the user id
+ * Returns the user ID corresponding to the given email.
+ * @param string $email the given email
  */
-function get_id($UserId) // TODO: fix to work with non-Princeton emails
+function get_id($email)
 {		 
 	global $mysql_con;
-	$UserId = "$UserId@princeton.edu";
+	$UserId = "$UserId";
 	$query = mysqli_query($mysql_con, "SELECT uid FROM members WHERE email='$UserId'") or die(mysqli_query($mysql_con));
 	$username_array = mysqli_fetch_array($query);
 	$username = $username_array[0];

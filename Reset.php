@@ -4,7 +4,7 @@ $renderer = new TemplateRenderer();
 
 // Set reset variables
 $submit = $_POST["submit"];
-$email = safe($_POST["email"], "sql").'@princeton.edu';
+$email = safe($_POST["email"], "sql");
 $code = safe($_POST["code"], "sql");
 $password = safe($_POST["password"], "sql");
 $repassword = safe($_POST["repassword"], "sql");

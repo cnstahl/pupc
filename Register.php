@@ -6,7 +6,7 @@ $renderer = new TemplateRenderer();
 $submit = $_POST["submit"];
 $password = $_POST["password"];
 $repassword = $_POST["repassword"];
-$email = safe($_POST["email"], "sql")."@princeton.edu";
+$email = safe($_POST["email"], "sql");
 $username = safe($_POST["username"], "sql");
 
 // Verify that the registration form was submitted and that the email & password are correct

@@ -35,7 +35,7 @@ class TemplateRenderer
 		if ($variables['logged_in'])
 		{
 			$UserID = safe($_COOKIE["Plink_uid"], 'sql');
-			$variables['user_email'] = get_username($UserID);
+			$variables['user_email'] = get_email($UserID);
 		}
 		return $this->environment->render($templateFile, $variables);
 	}

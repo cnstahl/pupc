@@ -5,15 +5,18 @@
 {% block body %}
 	{{ parent() }}
 	
-	<form role="form" action="" method="post">
-		<div class="row">
-			<label for="aid" class="col-sm-2 col-form-label">Financial aid:</label>
+	<form role="form" action="" method="post" class="form-horizontal">
+		<div class="form-group">
+			<label for="aid" class="col-xs-4 col-sm-2 control-label">Financial aid:</label>
 			<div class="col-sm-10">
-	    		<input type="checkbox" class="form-control" name="aid"></input>
+	    		<select class="form-control" name="aid">
+					<option value="true">Yes, I need financial aid.</option>
+					<option value="false" selected>No, I do need financial aid.</option>
+				</select>
 			</div>
 		</div>
-		<div class="row">
-			<label for="username" class="col-sm-2 col-form-label">Notes or requests:</label>
+		<div class="form-group">
+			<label for="username" class="col-sm-2 control-label">Notes, requests:</label>
 			<div class="col-sm-10">
 				<input type="text" class="form-control" name="note" placeholder=""></input>
 			</div>

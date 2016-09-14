@@ -7,7 +7,7 @@ $year = 2016; // Be sure to make the database table before updating this value
 
 // Set registration variables
 $submit = $_POST["submit"];
-$aid = ($_POST["aid"] == 'on');
+$aid = $_POST["aid"];
 $note = $_POST["note"];
 
 // Must be authenticated to register
