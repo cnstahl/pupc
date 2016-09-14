@@ -214,20 +214,22 @@ function verified()
 }
 
 /**
- * Registers the given uid for the PUPC of the given year, with given aid option and note.
+ * Registers the given uid for the PUPC of the given year, with given format, type, and aid options and note.
  * Note: this function assumes that the given email is SQL-safe.
- * @param string $uid the given uid
- * @param string $aid the given aid option
+ * @param int $uid the given uid
+ * @param int $format the given format option (0 for on-site, 1 for online)
+ * @param int $type the given type option (0 for team, 1 for individual)
+ * @param int $aid the given aid option
  * @param string $note the given note
  * @param int $year the given year
  * @return boolean whether the registration was successful
  */
-function register_PUPC($uid, $aid, $note, $year)
+function register_PUPC($uid, $format, $type, $aid, $note, $year)
 {
 	global $mysql_con;
 	date_default_timezone_set($timezone);
 	$date = date("Ymd H:i:s");
-	$status = mysqli_query($mysql_con, "INSERT INTO pupc_$year (date, uid, aid, notes) VALUES ('$date', $uid, $aid, '$note')");
+	$status = mysqli_query($mysql_con, "INSERT INTO pupc_$year (date, uid, online, individual, aid, notes) VALUES ('$date', $uid, $format, $type, $aid, '$note')");
 	if ($status)
 		email_PUPC_confirmation(get_email($uid), $year);
 	return $status;
