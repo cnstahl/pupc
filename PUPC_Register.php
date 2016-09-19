@@ -26,6 +26,6 @@ else
 			create_alert("There was a problem with your registration. You may already be registered.", "danger");
 		
 	// Load page
-	print $renderer->render('RegisterPUPC.php.twig', array());
+	print $renderer->render('RegisterPUPC.html.twig', array());
 }
 ?>
