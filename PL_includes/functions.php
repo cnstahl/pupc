@@ -5,7 +5,7 @@
  */
 
 // Create MySQL connection variable
-$mysql_con = mysqli_connect("localhost", "psps_platmin", "Zx2p?&d:+bbD", "psps_platform") or die(mysqli_connect_error());
+$mysql_con = mysqli_connect("localhost", "pupc", "Zx2p?&d:+bbE", "psps_platform") or die(mysqli_connect_error());
 $timezone = "America/New_York";
 $rand_sess = "NnOoPpQqRrSsTtUuVvWwXxYyZz0123456789";
 $rand_salt = "AABcDdeFgHJkLmNnoPqQrrSssTtuVwxYz12334567889";
@@ -103,7 +103,7 @@ function register($password, $email)
 	$type = 3;
 	$salt = substr(str_shuffle($rand_salt), 0, $substr_salt);
 	$password = generate_hash($password, $salt);
-	$UserID = mysqli_fetch_array(mysqli_query($mysql_con, "SELECT uid FROM members ORDER BY uid DESC LIMIT 1"))[0] + 1; // Sets new UID to next UID in sort order
+	$UserID = reset(mysqli_fetch_array(mysqli_query($mysql_con, "SELECT uid FROM members ORDER BY uid DESC LIMIT 1"))) + 1; // Sets new UID to next UID in sort order
 	email_registration($email);
 	return mysqli_query($mysql_con, "INSERT INTO members (date, IP, type, salt, password, uid, email) VALUES ('$date', '$ip', '$type', '$salt', '$password', '$UserID', '$email')");
 }
@@ -373,7 +373,7 @@ function display_answers($question)
 	$qid = get_qid($question);
 	$ans_query = mysqli_query($mysql_con, "SELECT content, up_votes, down_votes FROM responses WHERE question='$question' OR post_id=$qid AND type=1 ORDER BY id DESC");
 	if ($ans_query)
-		while ($content = safe(mysqli_fetch_array($ans_query, MYSQLI_NUM)[0], "html"))
+		while ($content = safe(reset(mysqli_fetch_array($ans_query, MYSQLI_NUM)), "html"))
 			echo "<span class=\"list\">\n$content\n</span><hr />\n";
 }
 
@@ -387,7 +387,7 @@ function display_replies($message)
 	$qid = get_qid($question);
 	$ans_query = mysqli_query($mysql_con, "SELECT content FROM messages WHERE parent_id=$message ORDER BY message_id DESC");
 	if ($ans_query)
-		while ($content = safe(mysqli_fetch_array($ans_query, MYSQLI_NUM)[0], "html"))
+		while ($content = safe(reset(mysqli_fetch_array($ans_query, MYSQLI_NUM)), "html"))
 			echo "<span class=\"list\">\n$content\n</span><hr />\n";
 }
 
@@ -396,7 +396,7 @@ function display_questions()
 {
 	global $mysql_con;
 	$Q_query = mysqli_query($mysql_con, "SELECT title FROM questions");
-	while ($title = safe(mysqli_fetch_array($Q_query, MYSQLI_NUM)[0], "html"))
+	while ($title = safe(reset(mysqli_fetch_array($Q_query, MYSQLI_NUM)), "html"))
 		echo "<div class=\"media\">
 								<div class=\"media-body\">
 									 <header><h4 class=\"media-heading\"><a href=\"?question=$title#connection\">$title</a></h4></header>
@@ -816,7 +816,7 @@ function insert_stats()
 function create_alert($message, $type)
 {
 	global $renderer;
-	array_push($renderer->flashes, [$type, $message]);
+	array_push($renderer->flashes, array($type, $message));
 	return $type;
 }
 ?>

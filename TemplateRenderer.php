@@ -1,6 +1,6 @@
 <?php
 include("./PL_includes/functions.php");
-require_once $_SERVER['DOCUMENT_ROOT'].'/../php/Twig/Autoloader.php';
+require_once 'Twig/Autoloader.php';
 Twig_Autoloader::register();
 
 class TemplateRenderer
@@ -25,7 +25,7 @@ class TemplateRenderer
 		);
 		$this->loader = new Twig_Loader_Filesystem($templateDirs);
 		$this->environment = new Twig_Environment($this->loader, $envOptions);
-		$this->flashes = [];
+		$this->flashes = array();
 	}
 
 	public function render($templateFile, array $variables)
