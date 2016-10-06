@@ -224,14 +224,36 @@ function verified()
  * @param int $year the given year
  * @return boolean whether the registration was successful
  */
-function register_PUPC($uid, $format, $type, $aid, $note, $year)
+function register_PUPC($uid, $aid, $note, $year)
 {
 	global $mysql_con;
 	date_default_timezone_set($timezone);
 	$date = date("Ymd H:i:s");
-	$status = mysqli_query($mysql_con, "INSERT INTO pupc_$year (date, uid, online, individual, aid, notes) VALUES ('$date', $uid, $format, $type, $aid, '$note')");
+	$status = mysqli_query($mysql_con, "INSERT INTO pupc_$year (date, uid, aid, notes) VALUES ('$date', $uid, $aid, '$note')");
 	if ($status)
-		email_PUPC_confirmation(get_email($uid), $format, $type, $year);
+		email_PUPC_confirmation(get_email($uid), $year);
+	return $status;
+}
+
+/**
+ * Registers the given uids for the PUPC of the given year, with given format, type, and aid options and note.
+ * Note: this function assumes that the given team is SQL-safe.
+ * @param string $name the given team name
+ * @param int array $uids the given uids array
+ * @param int $year the given year
+ * @return boolean whether the registration was successful
+ */
+function register_PUPC_team($name, $uids, $year)
+{
+	global $mysql_con;
+	date_default_timezone_set($timezone);
+	$date = date("Ymd H:i:s");
+	while (count($uids) < 6)
+		array_push($uids, 'NULL'); // pad out array TODO: use NULL instead
+	$status = mysqli_query($mysql_con, "INSERT INTO pupc_online_$year (date, name, uid1, uid2, uid3, uid4, uid5, uid6) VALUES ('$date', '$name', $uids[0], $uids[1], $uids[2], $uids[3], $uids[4], $uids[5])");
+//	if ($status)
+//		for ($i = 0; $i < count($uids); $i++)
+//			email_PUPC_team_confirmation(get_email($uid[i]), $year);
 	return $status;
 }
 
@@ -241,16 +263,37 @@ function register_PUPC($uid, $format, $type, $aid, $note, $year)
  * @param string $email the given email address
  * @param string $year the given year
  */
-function email_PUPC_confirmation($email, $format, $type, $year)
+function email_PUPC_confirmation($email, $year)
 {
 	global $mysql_con;
 	$end = strpos($email, '@');
 	$name = substr($email, 0, $end);
-	$format = ($format == 1) ?   "on-site event" : "online part";
-	$type = ($type == 1) ?   "an individual participant" : "a team";
 	$to      = $email;
 	$subject = "PUPC $year registration confirmation";
-	$message = "Hello $name,<br /><br />Thank you for registering for the $format of PUPC $year! This e-mail confirms that you have successfully registered as $type.";
+	$message = "Hello $name,<br /><br />Thank you for registering for PUPC $year! This e-mail confirms that you have successfully registered. ";
+//	$message .= "and your ID is 16<continent code><country ISO code><index from within country>.";
+	$message .= "We look forward to your participation!<br /><br />Best wishes,<br />PUPC Organizers";
+	$headers = "From: The PSPS Portal Administrator <noreply@psps.mycpanel.princeton.edu>\n";
+	$headers .= "Content-type: text/html; charset=iso-8859-1\n";
+	$headers .= "X-Mailer: PHP/" . phpversion() . "\n";
+	$headers .= "List-Unsubscribe: http://psps.mycpanel.princeton.edu/?action=unsubscribe&email=$email";
+	mail($to, $subject, $message, $headers);
+}
+
+/**
+ * Sends a confirmation email of PUPC team registration of the given year to the given email address.
+ * Note: this function assumes that the given email is SQL-safe.
+ * @param string $email the given email address
+ * @param string $year the given year
+ */
+function email_PUPC_team_confirmation($email, $year)
+{
+	global $mysql_con;
+	$end = strpos($email, '@');
+	$name = substr($email, 0, $end);
+	$to      = $email;
+	$subject = "PUPC $year registration confirmation";
+	$message = "Hello $name,<br /><br />Thank you for registering for PUPC $year! This e-mail confirms that you have successfully registered. ";
 //	$message .= "and your ID is 16<continent code><country ISO code><index from within country>.";
 	$message .= "We look forward to your participation!<br /><br />Best wishes,<br />PUPC Organizers";
 	$headers = "From: The PSPS Portal Administrator <noreply@psps.mycpanel.princeton.edu>\n";
@@ -766,11 +809,10 @@ function get_title($id)
 function get_id($email)
 {		 
 	global $mysql_con;
-	$UserId = "$UserId";
+	$UserId = $email;
 	$query = mysqli_query($mysql_con, "SELECT uid FROM members WHERE email='$UserId'") or die(mysqli_query($mysql_con));
 	$username_array = mysqli_fetch_array($query);
 	$username = $username_array[0];
-	$username = substr($username,0,$end);
 	return $username;
 }
 

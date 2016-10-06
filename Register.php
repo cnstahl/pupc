@@ -14,11 +14,18 @@ $email = $_POST["email"];
 $username = $_POST["username"];
 
 $format = $_POST["format"];
-$type = $_POST["type"];
 $aid = $_POST["aid"];
 $note = $_POST["note"];
+$name = $_POST["name"];
+$emails = array();
+array_push($emails, $_POST["email1"]);
+array_push($emails, $_POST["email2"]);
+array_push($emails, $_POST["email3"]);
+array_push($emails, $_POST["email4"]);
+array_push($emails, $_POST["email5"]);
+array_push($emails, $_POST["email6"]);
 
-if ($password) {
+if ($password) { // Submitted account registration
 	$email = safe($email, "sql");
 	$username = safe($username, "sql");
 	
@@ -32,7 +39,7 @@ if ($password) {
 	if ($register_result == "success")
 		header('Location: index.php');
 	else
-		print $renderer->render('MakeAccount.php.twig', array());
+		print $renderer->render('MakeAccount.html.twig', array());
 }
 else {
 	// Must be authenticated to register for PUPC
@@ -43,11 +50,24 @@ else {
 	else {
 		$uid = safe($_COOKIE["Plink_uid"], 'sql');
 		// Verify that the registration form was submitted and that the email & password are correct
-		if ($submit)
-			if (register_PUPC($uid, $format, $type, $aid, $note, $year))
-				create_alert("Registered successfully!", "success");
+		if ($submit) {
+			$uids = array();
+			for ($i = 0; $i < count($emails); $i++) {
+				$email = trim(safe($emails[$i], 'sql'));
+				if (strlen($email) > 0)
+					array_push($uids, get_id($email));
+			}
+			if ($format == "true")
+				if (register_PUPC_team($name, $uids, $year))
+					create_alert("Registered successfully!", "success");
+				else
+					create_alert("There was a problem with your registration. Your team name may already be registered.", "danger");
 			else
-				create_alert("There was a problem with your registration. You may already be registered.", "danger");
+				if (register_PUPC($uid, $aid, $note, $year))
+					create_alert("Registered successfully!", "success");
+				else
+					create_alert("There was a problem with your registration. You may already be registered.", "danger");
+		}
 			
 		// Load page
 		print $renderer->render('Register.html.twig', array());

@@ -17,6 +17,6 @@ else if (!verified())
 */
 if ($_GET["logout"])
 	logout();
-print $renderer->render('index.php.twig', array());
+print $renderer->render('index.html.twig', array());
 
 ?>
