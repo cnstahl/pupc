@@ -2,7 +2,7 @@
 <html lang="en" xmlns="http://www.w3.org/1999/html">
 	<head>
 {% block head %}
-		<title>{% block title %}{{ title }} - Princeton Society of Physics Students{% endblock %}</title>
+		<title>{% block title %}{{ title }} - Princeton University Physics Competition{% endblock %}</title>
 {% include "partials/meta.html.twig" %}
 {% include "partials/css.html.twig" %}
 {% include "partials/js.html.twig" %}
@@ -11,6 +11,20 @@
 	</head>
 	<body>
 		{% include "partials/navbar.html.twig" %}
+		<!-- Set your background image for this header on the line below. -->
+		<header class="intro-header" style="background-image: url('imgs/{% block image %}PUPC_campus_crop.jpg{% endblock %}')">
+			<div class="container">
+				<div class="row">
+					<div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+						<div class="site-heading">
+							<h1></h1>
+							<!--<hr class="small">-->
+							<span class="subheading"></span>
+						</div>
+					</div>
+				</div>
+			</div>
+		</header>
 		<div class="container">
 {% for flash in flashes %}
 			<div class="alert alert-{{ flash[0] }} fade in">

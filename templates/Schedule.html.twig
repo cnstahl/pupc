@@ -1,7 +1,8 @@
-{% extends "layout_PUPC.html.twig" %}
+{% extends "layout.html.twig" %}
 
 {% set title = "Schedule" %}
 
+{% block image %}audience.jpg{% endblock %}
 {% block body %}
 	{{ parent() }}
 	
@@ -22,6 +23,6 @@
 	
 	<h2 name="directions">Directions to campus</h2>
 	<p>Please read <a href="http://www.princeton.edu/main/visiting/travel/" target="_blank">this overview</a> for traveling to campus from various directions.
-	<!--<p>Please note that there will be no parking available in the lots on Ivy Lane or LOT 21. Per official instructions, on 11/22/2014 guests may park in LOT 10, 13, or the North Garage only.--> The parking map is located <em><a href="http://www.princeton.edu/parking/Parking_Lots.pdf" target="_blank">here</a></em>.
+	<!--<p>Please note that there will be no parking available in the lots on Ivy Lane or Lot 21. Per official instructions, on 11/22/2014 guests may park in LOT 10, 13, or the North Garage only.--> The parking map is located <em><a href="http://www.princeton.edu/parking/Parking_Lots.pdf" target="_blank">here</a></em>.
 	<p>Per university policy, high school students are not permitted to stay overnight on campus.</p>
 {% endblock body %}
