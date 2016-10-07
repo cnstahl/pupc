@@ -1,5 +1,5 @@
 <?php
-/* This file contains the the MySQL connection and definitions for all of the custom functions used in PSPS Portal:
+/* This file contains the the MySQL connection and definitions for all of the custom functions used in PUPC Portal:
  * login(), register(), valid_login(), valid_registration(), registration_error(), add_question(), 
  * display_questions(), add_debate(), add_response(), display_debates(), display_responses()
  */
@@ -173,12 +173,12 @@ function email_registration($email)
 	$rand = substr(str_shuffle($rand_gen), 0, $substr_gen);
 	mysqli_query($mysql_con, "INSERT INTO verification_codes (email, code) VALUES ('$email', '$rand')");
 	$to      = $email;
-	$subject = 'PSPS Portal registration confirmation';
-	$message = "Hello $name,<br /><br />Thank you for signing up at the PSPS Portal, Princeton Society of Physics Students' online network and interstudent Q&A platform, open only to members of the Princeton University community. Its advantage is in having the ability to handle mentorship and mentoring requests from anyone who signs up. Every few weeks videos or other educational content containing physics-related topics will be posted, with the ability to discuss each of them, as well as to pose anonymous general questions about PSPS or the Physics Department to the officers. <br />Please hit the link below to confirm your e-mail and begin using the Portal!<br /><br />http://psps.mycpanel.princeton.edu/?code=".$rand.'&email='.$email."<br /><br />Thank you,<br />Pavel Shibayev '15<br />Physics Department<br />PSPS secretary/Portal developer<br /><br />If you'd like to unsubscribe, please go here: http://psps.mycpanel.princeton.edu/?action=unsubscribe&email=$email.";
-	$headers = "From: The PSPS Portal Administrator <noreply@psps.mycpanel.princeton.edu>\n";
+	$subject = 'PUPC Portal registration confirmation';
+	$message = "Hello $name,<br /><br />Thank you for signing up at the PUPC Portal, Princeton Society of Physics Students' online network and interstudent Q&A platform, open only to members of the Princeton University community. Its advantage is in having the ability to handle mentorship and mentoring requests from anyone who signs up. Every few weeks videos or other educational content containing physics-related topics will be posted, with the ability to discuss each of them, as well as to pose anonymous general questions about PUPC or the Physics Department to the officers. <br />Please hit the link below to confirm your e-mail and begin using the Portal!<br /><br />http://pupc.princeton.edu/?code=".$rand.'&email='.$email."<br /><br />Thank you,<br />Pavel Shibayev '15<br />Physics Department<br />PUPC secretary/Portal developer<br /><br />If you'd like to unsubscribe, please go here: http://pupc.princeton.edu/?action=unsubscribe&email=$email.";
+	$headers = "From: The PUPC Portal Administrator <noreply@pupc.princeton.edu>\n";
 	$headers .= "Content-type: text/html; charset=iso-8859-1\n";
 	$headers .= "X-Mailer: PHP/" . phpversion() . "\n";
-	$headers .= "List-Unsubscribe: http://psps.mycpanel.princeton.edu/?action=unsubscribe&email=$email";
+	$headers .= "List-Unsubscribe: http://pupc.princeton.edu/?action=unsubscribe&email=$email";
 	mail($to, $subject, $message, $headers);
 }
 
@@ -195,7 +195,7 @@ function verify($code, $email)
 	if (mysqli_num_rows($query))
 	{
 		mysqli_query($mysql_con,"UPDATE members SET type=2 WHERE email='$email'");
-		create_alert('Your account has been verified. Explore the PSPS Portal now!', 'success');
+		create_alert('Your account has been verified. Explore the PUPC Portal now!', 'success');
 	}
 	else
 		create_alert("The verification code is invalid. Please try again.", 'info');
@@ -273,10 +273,10 @@ function email_PUPC_confirmation($email, $year)
 	$message = "Hello $name,<br /><br />Thank you for registering for PUPC $year! This e-mail confirms that you have successfully registered. ";
 //	$message .= "and your ID is 16<continent code><country ISO code><index from within country>.";
 	$message .= "We look forward to your participation!<br /><br />Best wishes,<br />PUPC Organizers";
-	$headers = "From: The PSPS Portal Administrator <noreply@psps.mycpanel.princeton.edu>\n";
+	$headers = "From: The PUPC Portal Administrator <noreply@pupc.princeton.edu>\n";
 	$headers .= "Content-type: text/html; charset=iso-8859-1\n";
 	$headers .= "X-Mailer: PHP/" . phpversion() . "\n";
-	$headers .= "List-Unsubscribe: http://psps.mycpanel.princeton.edu/?action=unsubscribe&email=$email";
+	$headers .= "List-Unsubscribe: http://pupc.princeton.edu/?action=unsubscribe&email=$email";
 	mail($to, $subject, $message, $headers);
 }
 
@@ -296,10 +296,10 @@ function email_PUPC_team_confirmation($email, $year)
 	$message = "Hello $name,<br /><br />Thank you for registering for PUPC $year! This e-mail confirms that you have successfully registered. ";
 //	$message .= "and your ID is 16<continent code><country ISO code><index from within country>.";
 	$message .= "We look forward to your participation!<br /><br />Best wishes,<br />PUPC Organizers";
-	$headers = "From: The PSPS Portal Administrator <noreply@psps.mycpanel.princeton.edu>\n";
+	$headers = "From: The PUPC Portal Administrator <noreply@pupc.princeton.edu>\n";
 	$headers .= "Content-type: text/html; charset=iso-8859-1\n";
 	$headers .= "X-Mailer: PHP/" . phpversion() . "\n";
-	$headers .= "List-Unsubscribe: http://psps.mycpanel.princeton.edu/?action=unsubscribe&email=$email";
+	$headers .= "List-Unsubscribe: http://pupc.princeton.edu/?action=unsubscribe&email=$email";
 	mail($to, $subject, $message, $headers);
 }
 
@@ -321,11 +321,11 @@ function email_reset($email)
 	$rand = substr(str_shuffle($rand_gen), 0, $substr_gen);
 	mysqli_query($mysql_con, "INSERT INTO reset_codes (email, code) VALUES ('$email', '$rand') ON DUPLICATE KEY UPDATE code='$rand'");
 	$to      = $email;
-	$subject = 'PSPS Portal password reset';
-	$message = "Hello $name,<br /><br />To reset your password, please visit the following link: http://psps.mycpanel.princeton.edu/Reset.php?reset=true&code=$rand&email=$email.";
-	$headers = 'From: The PSPS Portal Administrator <noreply@psps.mycpanel.princeton.edu>' . "\r\n";
+	$subject = 'PUPC Portal password reset';
+	$message = "Hello $name,<br /><br />To reset your password, please visit the following link: http://pupc.princeton.edu/Reset.php?reset=true&code=$rand&email=$email.";
+	$headers = 'From: The PUPC Portal Administrator <noreply@pupc.princeton.edu>' . "\r\n";
 	$headers .= "Content-type: text/html; charset=iso-8859-1\r\n";
-	$headers .= "List-Unsubscribe: http://psps.mycpanel.princeton.edu/?action=unsubscribe&email=$email";
+	$headers .= "List-Unsubscribe: http://pupc.princeton.edu/?action=unsubscribe&email=$email";
 	mail($to, $subject, $message, $headers);
 }
 
