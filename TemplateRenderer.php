@@ -31,6 +31,9 @@ class TemplateRenderer
 	public function render($templateFile, array $variables)
 	{
 		$variables['flashes'] = $this->flashes;
+		$variables['page'] = $_SERVER['REQUEST_URI'];
+		if ($_GET["logout"])
+			logout();
 		$variables['logged_in'] = logged_in();
 		if ($variables['logged_in'])
 		{

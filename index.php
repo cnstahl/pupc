@@ -15,8 +15,10 @@ if (!logged_in())
 else if (!verified())
 	header("Location: Sorry.php");
 */
+/*
 if ($_GET["logout"])
 	logout();
+*/
 print $renderer->render('index.html.twig', array());
 
 ?>

@@ -10,9 +10,10 @@
 	if ($login_submit && valid_login($login_name, $login_pass) && login($login_name, $login_pass))
 	{
 //		create_alert("Logged in successfully.", 'success');
-		header("Location: ../index.php");
+		header("Location: .." . $_POST["page"]);
 	}
 	else
+		echo $_POST["page"];
 		echo "Invalid login credentials.";
 //		create_alert("Invalid e-mail/password combination!", 'danger');
 ?>

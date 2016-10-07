@@ -14,9 +14,10 @@
 {% if not logged_in %}
 						<form class="navbar-form navbar-right hidden-xs" role="form" action="PL_includes/login.php" method="post">
 							<div class="form-group input-group-sm">
-								<input type="text" class="form-control" name="email" placeholder="Email">
-								<input type="password" class="form-control" name="password" placeholder="Password">
+								<input type="text" class="form-control" name="email" placeholder="Email" />
+								<input type="password" class="form-control" name="password" placeholder="Password" />
 							</div>
+							<input type="hidden" name="page" value="{{ page }}" />
 							<button type="submit" name="submit" value="true" class="btn btn-default btn-sm">Log in</button>
 						</form>
 {% else %}
