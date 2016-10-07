@@ -361,7 +361,7 @@ function reset_password($email, $new_password, $re_new_password) // TODO: Limit 
 	{
 		$salt = substr(str_shuffle($rand_salt), 0, $substr_salt);
 		$password = generate_hash($password, $salt);
-		mysqli_query($mysql_con, "UPDATE members SET password='$password' WHERE email='$email'");
+		mysqli_query($mysql_con, "UPDATE members SET password='$password', salt='$salt' WHERE email='$email'");
 		mysqli_query($mysql_con, "DELETE FROM reset_codes WHERE email='$email'");
 		create_alert("Your password was successfully reset!", 'success');
 	}
