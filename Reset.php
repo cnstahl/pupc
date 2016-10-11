@@ -17,7 +17,8 @@ if ($_GET['reset'] == 'true') { // Verify code is correct: if it is, password bl
 	{
 		$reset = true;
 		if ($submit) // New password submitted
-			reset_password($email, $password, $repassword);
+			if (reset_password($email, $password, $repassword)) // Password reset successful
+				$renderer->redirect();
 	}
 }
 else if ($submit) // POST request submitted
@@ -31,8 +32,9 @@ else if ($submit) // POST request submitted
 		}
 		else
 			create_alert($reset_result = "Your email was not found in the database.", 'danger');
-	else if (verify_reset($code, $email)) // Submitting new password
-		reset_password($email, $password, $repassword);
+	else if (verify_reset($code, $email)) // Submitting new password; TODO: check if control ever reaches here
+		if (reset_password($email, $password, $repassword)) // Password reset successful
+			$renderer->redirect();
 }
 
 print $renderer->render('Reset.php.twig', array(

@@ -4,6 +4,8 @@
  * display_questions(), add_debate(), add_response(), display_debates(), display_responses()
  */
 
+session_start();
+
 // Create MySQL connection variable
 $mysql_con = mysqli_connect("localhost", "pupc", "Zx2p?&d:+bbE", "psps_platform") or die(mysqli_connect_error());
 $timezone = "America/New_York";
@@ -104,8 +106,7 @@ function register($password, $email)
 	$salt = substr(str_shuffle($rand_salt), 0, $substr_salt);
 	$password = generate_hash($password, $salt);
 	$UserID = reset(mysqli_fetch_array(mysqli_query($mysql_con, "SELECT uid FROM members ORDER BY uid DESC LIMIT 1"))) + 1; // Sets new UID to next UID in sort order
-	email_registration($email);
-	return mysqli_query($mysql_con, "INSERT INTO members (date, IP, type, salt, password, uid, email) VALUES ('$date', '$ip', '$type', '$salt', '$password', '$UserID', '$email')");
+	return mysqli_query($mysql_con, "INSERT INTO members (date, IP, type, salt, password, uid, email) VALUES ('$date', '$ip', '$type', '$salt', '$password', '$UserID', '$email')") && email_registration($email);
 }
 
 /**
@@ -130,15 +131,15 @@ function valid_registration($password, $repassword, $email) // TODO: accept othe
  * @param string $email the given email
  * @return string the error message
  */
-function registration_error($password, $repassword, $email) // TODO: generalise
+function registration_error($password, $repassword, $email) // TODO: do email validation
 {
 	global $mysql_con;
 	$email_query = mysqli_query($mysql_con, "SELECT * FROM members WHERE email='$email'");
 	$error = "There was a problem with your registration: <ul>";
 	if (mysqli_num_rows($email_query))
 		$error .= "<li>The email you entered has already been registered.</li>";
-	if (!preg_match('#[a-zA-Z0-9]+#i', $email))
-		$error .= "<li>The email you entered is invalid; the correct format is NetID@princeton.edu.</li>";
+//	if (!preg_match('#[a-zA-Z0-9]+#i', $email))
+//		$error .= "<li>The email you entered is invalid.</li>";
 	if (strlen($password) < 7 || strlen($password) > 100)
 		$error .= "<li>Your password must be between 7 and 100 characters long.</li>";
 	if ($password != $repassword)
@@ -171,15 +172,17 @@ function email_registration($email)
 	$end = strpos($email, '@');
 	$name = substr($email, 0, $end);
 	$rand = substr(str_shuffle($rand_gen), 0, $substr_gen);
-	mysqli_query($mysql_con, "INSERT INTO verification_codes (email, code) VALUES ('$email', '$rand')");
-	$to      = $email;
-	$subject = 'PUPC Portal registration confirmation';
-	$message = "Hello $name,<br /><br />Thank you for signing up at the PUPC Portal, Princeton Society of Physics Students' online network and interstudent Q&A platform, open only to members of the Princeton University community. Its advantage is in having the ability to handle mentorship and mentoring requests from anyone who signs up. Every few weeks videos or other educational content containing physics-related topics will be posted, with the ability to discuss each of them, as well as to pose anonymous general questions about PUPC or the Physics Department to the officers. <br />Please hit the link below to confirm your e-mail and begin using the Portal!<br /><br />http://pupc.princeton.edu/?code=".$rand.'&email='.$email."<br /><br />Thank you,<br />Pavel Shibayev '15<br />Physics Department<br />PUPC secretary/Portal developer<br /><br />If you'd like to unsubscribe, please go here: http://pupc.princeton.edu/?action=unsubscribe&email=$email.";
-	$headers = "From: The PUPC Portal Administrator <noreply@pupc.princeton.edu>\n";
-	$headers .= "Content-type: text/html; charset=iso-8859-1\n";
-	$headers .= "X-Mailer: PHP/" . phpversion() . "\n";
-	$headers .= "List-Unsubscribe: http://pupc.princeton.edu/?action=unsubscribe&email=$email";
-	mail($to, $subject, $message, $headers);
+	if (mysqli_query($mysql_con, "INSERT INTO verification_codes (email, code) VALUES ('$email', '$rand')")) {
+		$to      = $email;
+		$subject = 'PUPC account registration confirmation';
+		$message = "Hello $name,<br /><br />Thank you for your interest in the Princeton University Princeton Competition<br />Please hit the link below to confirm your e-mail and begin registration!<br /><br />http://pupc.princeton.edu/?code=".$rand.'&email='.$email."<br /><br />Thank you,<br />Pavel Shibayev '15<br />Physics Department<br />PUPC secretary/ developer<br /><br />If you'd like to unsubscribe, please go here: http://pupc.princeton.edu/?action=unsubscribe&email=$email.";
+		$headers = "From: PUPC Administrator <noreply@pupc.princeton.edu>\n";
+		$headers .= "Content-type: text/html; charset=iso-8859-1\n";
+		$headers .= "X-Mailer: PHP/" . phpversion() . "\n";
+		$headers .= "List-Unsubscribe: http://pupc.princeton.edu/?action=unsubscribe&email=$email";
+		return mail($to, $subject, $message, $headers);
+	}
+	return false;
 }
 
 /**
@@ -194,8 +197,9 @@ function verify($code, $email)
 	$query = mysqli_query($mysql_con, "SELECT * FROM verification_codes WHERE code='$code' AND email='$email'");
 	if (mysqli_num_rows($query))
 	{
-		mysqli_query($mysql_con,"UPDATE members SET type=2 WHERE email='$email'");
-		create_alert('Your account has been verified. Explore the PUPC Portal now!', 'success');
+		mysqli_query($mysql_con, "UPDATE members SET type=2 WHERE email='$email'");
+		mysqli_query($mysql_con, "DELETE FROM verification_codes where email='$email'");
+		create_alert("Your account has been verified. You may now register for PUPC!", 'success');
 	}
 	else
 		create_alert("The verification code is invalid. Please try again.", 'info');
@@ -273,7 +277,7 @@ function email_PUPC_confirmation($email, $year)
 	$message = "Hello $name,<br /><br />Thank you for registering for PUPC $year! This e-mail confirms that you have successfully registered. ";
 //	$message .= "and your ID is 16<continent code><country ISO code><index from within country>.";
 	$message .= "We look forward to your participation!<br /><br />Best wishes,<br />PUPC Organizers";
-	$headers = "From: The PUPC Portal Administrator <noreply@pupc.princeton.edu>\n";
+	$headers = "From: PUPC Administrator <noreply@pupc.princeton.edu>\n";
 	$headers .= "Content-type: text/html; charset=iso-8859-1\n";
 	$headers .= "X-Mailer: PHP/" . phpversion() . "\n";
 	$headers .= "List-Unsubscribe: http://pupc.princeton.edu/?action=unsubscribe&email=$email";
@@ -296,7 +300,7 @@ function email_PUPC_team_confirmation($email, $year)
 	$message = "Hello $name,<br /><br />Thank you for registering for PUPC $year! This e-mail confirms that you have successfully registered. ";
 //	$message .= "and your ID is 16<continent code><country ISO code><index from within country>.";
 	$message .= "We look forward to your participation!<br /><br />Best wishes,<br />PUPC Organizers";
-	$headers = "From: The PUPC Portal Administrator <noreply@pupc.princeton.edu>\n";
+	$headers = "From: PUPC Administrator <noreply@pupc.princeton.edu>\n";
 	$headers .= "Content-type: text/html; charset=iso-8859-1\n";
 	$headers .= "X-Mailer: PHP/" . phpversion() . "\n";
 	$headers .= "List-Unsubscribe: http://pupc.princeton.edu/?action=unsubscribe&email=$email";
@@ -352,7 +356,7 @@ function verify_reset($code, $email) // TODO: Add time limit for resetting
  * Note: this function assumes that the given email is SQL-safe.
  * @param string $email the given email
  * @param string $new_password the given new password
- * @return string the status message for whether the password was reset successfully
+ * @return boolean whether the password was reset successfully
  */
 function reset_password($email, $new_password, $re_new_password) // TODO: Limit the number of code attempts
 {
@@ -360,13 +364,15 @@ function reset_password($email, $new_password, $re_new_password) // TODO: Limit 
 	if (valid_registration($new_password, $re_new_password, $email.'asdf'))
 	{
 		$salt = substr(str_shuffle($rand_salt), 0, $substr_salt);
-		$password = generate_hash($password, $salt);
+		$password = generate_hash($new_password, $salt);
 		mysqli_query($mysql_con, "UPDATE members SET password='$password', salt='$salt' WHERE email='$email'");
 		mysqli_query($mysql_con, "DELETE FROM reset_codes WHERE email='$email'");
 		create_alert("Your password was successfully reset!", 'success');
+		return true;
 	}
 	else
 		create_alert(registration_error($new_password, $re_new_password, $email.'asdf'), 'danger');
+	return false;
 }
 
 
@@ -857,8 +863,9 @@ function insert_stats()
  */
 function create_alert($message, $type)
 {
-	global $renderer;
-	array_push($renderer->flashes, array($type, $message));
+	if (!isset($_SESSION['flashes']))
+		$_SESSION['flashes'] = array();
+	array_push($_SESSION['flashes'], array($type, $message));
 	return $type;
 }
 ?>
