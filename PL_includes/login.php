@@ -10,6 +10,6 @@ $login_pass = $_POST["password"];
 if ($login_submit && valid_login($login_name, $login_pass) && login($login_name, $login_pass))
 	create_alert("Logged in successfully.", 'success');
 else
-	create_alert("Invalid e-mail/password combination!", 'danger');
+	create_alert("Invalid e-mail/password combination! <a href=\"Reset.php\">Forgot your password?</a>", 'danger');
 header("Location: .." . $_POST["page"]);
 ?>

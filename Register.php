@@ -43,8 +43,12 @@ if ($password) { // Submitted account registration
 }
 else {
 	// Must be authenticated to register for PUPC
-	if (!logged_in() || !verified()) {
-		create_alert("Please create an account or log in before registering.", "warning");
+	if (!logged_in()) {
+		create_alert("Please log in before registering.", "warning");
+		print $renderer->render('MakeAccount.html.twig', array());
+	}
+	else if (!verified()) {
+		create_alert("Please verify your account before registering.");
 		print $renderer->render('MakeAccount.html.twig', array());
 	}
 	else {

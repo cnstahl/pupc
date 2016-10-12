@@ -21,7 +21,7 @@
 {% for flash in flashes %}
 			<div class="alert alert-{{ flash[0] }} fade in">
 				<a href="#" class="close" data-dismiss="alert">&times;</a>
-				{{ flash[1] }}
+				{{ flash[1] | raw }}
 			</div>
 {% endfor %}
 {% block body %}
