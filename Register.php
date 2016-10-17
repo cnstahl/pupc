@@ -14,6 +14,7 @@ $email = $_POST["email"];
 $username = $_POST["username"];
 
 $format = $_POST["format"];
+$site = $_POST["site"];
 $aid = $_POST["aid"];
 $note = $_POST["note"];
 $name = $_POST["name"];
@@ -66,7 +67,7 @@ else {
 				else
 					create_alert("There was a problem with your registration. Your team name may already be registered.", "danger");
 			else
-				if (register_PUPC($uid, $aid, $note, $year))
+				if (register_PUPC($uid, $site, $aid, $note, $year))
 					create_alert("Registered successfully!", "success");
 				else
 					create_alert("There was a problem with your registration. You may already be registered.", "danger");

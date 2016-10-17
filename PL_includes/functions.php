@@ -218,24 +218,23 @@ function verified()
 }
 
 /**
- * Registers the given uid for the PUPC of the given year, with given format, type, and aid options and note.
+ * Registers the given uid for the PUPC of the given year, with given testing site and aid options, and note.
  * Note: this function assumes that the given email is SQL-safe.
  * @param int $uid the given uid
- * @param int $format the given format option (0 for on-site, 1 for online)
- * @param int $type the given type option (0 for team, 1 for individual)
+ * @param int $site the given testing site
  * @param int $aid the given aid option
  * @param string $note the given note
  * @param int $year the given year
  * @return boolean whether the registration was successful
  */
-function register_PUPC($uid, $aid, $note, $year)
+function register_PUPC($uid, $site, $aid, $note, $year)
 {
 	global $mysql_con;
 	date_default_timezone_set($timezone);
-	$date = date("Ymd H:i:s");
+	$date = date("Y-m-d H:i:s");
 	if (!verified())
 		return 0;
-	$status = mysqli_query($mysql_con, "INSERT INTO pupc_$year (date, uid, aid, notes) VALUES ('$date', $uid, $aid, '$note')");
+	$status = mysqli_query($mysql_con, "INSERT INTO pupc_$year (date, uid, site, aid, notes) VALUES ('$date', $uid, '$site', $aid, '$note')");
 	if ($status)
 		email_PUPC_confirmation(get_email($uid), $year);
 	return $status;
@@ -253,7 +252,7 @@ function register_PUPC_team($name, $uids, $year)
 {
 	global $mysql_con;
 	date_default_timezone_set($timezone);
-	$date = date("Ymd H:i:s");
+	$date = date("Y-m-d H:i:s");
 	while (count($uids) < 6)
 		array_push($uids, 'NULL'); // pad out array TODO: use NULL instead
 	$status = mysqli_query($mysql_con, "INSERT INTO pupc_online_$year (date, name, uid1, uid2, uid3, uid4, uid5, uid6) VALUES ('$date', '$name', $uids[0], $uids[1], $uids[2], $uids[3], $uids[4], $uids[5])");
