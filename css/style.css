@@ -1,7 +1,7 @@
 /*  Website styling, by Ming-Yee Tsang */
 
-html {
-
+* {
+	font-family: "Palatino Linotype", Palatino, serif;
 }
 body {
 	 padding-top: 50px;
@@ -18,6 +18,9 @@ div.container {
 	margin: 0 auto;
 }
 body > header {
+	background-size: contain;
+	background-repeat: no-repeat;
+	background-position: center center;
 	min-height: 200px;
 	max-height: 500px;
 }
@@ -35,3 +38,23 @@ alert ul > li::before {
 .form-horizontal .control-label {
 	text-align: left;
 }
+
+/* Icons */
+span.icon::before {
+	background-size: 20px 20px;
+	background-position: bottom;
+	background-repeat: no-repeat;
+	display: inline-block;
+	width: 25px;
+	height: 25px;
+	content: "";
+}
+span.icon-mail::before {
+	background-image: url('../img/iconmonstr-email-2.svg');
+}
+span.icon-mail:hover::before {
+	background-image: url('../img/iconmonstr-email-8.svg');
+	background-size: 20px 26.5px;
+}
+span.icon-facebook::before { background-image: url('../img/social-1_logo-facebook.svg'); }
+span.icon-facebook:hover::before { background-image: url('../img/social-1_logo-facebook-blue.svg'); }
