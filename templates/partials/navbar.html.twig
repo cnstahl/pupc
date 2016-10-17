@@ -21,7 +21,7 @@
 							<button type="submit" name="submit" value="true" class="btn btn-default btn-sm">Log in</button>
 						</form>
 {% else %}
-						<p class="navbar-text navbar-right hidden-xs">Signed in as {{ user_email }} (<a href="?logout=true">Logout</a>)</p>
+						<p class="navbar-text navbar-right hidden-xs">Signed in as {{ user_name }} (<a href="?logout=true">Logout</a>)</p>
 {% endif %}
 						<ul class="nav navbar-nav">
 							<li><a href="About.php">About</a></li>
@@ -38,7 +38,8 @@
 {% if not logged_in %}
 							<li class="hidden-sm hidden-md hidden-lg"><a href="Login.php">Log in</a></li>
 {% else %}
-							<li><a class="hidden-sm hidden-md hidden-lg">Signed in as {{ user_email }}</a></li>
+							<li><a class="hidden-sm hidden-md hidden-lg">Signed in as {{ user_name }}</a></li>
+							<li><a href="Profile.php">Profile</a></li>
 							<li class="hidden-sm hidden-md hidden-lg"><a href="?logout=true">Logout</a></li>
 {% endif %}
 						</ul>

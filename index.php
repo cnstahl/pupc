@@ -6,8 +6,9 @@ if ($_GET["code"] && $_GET["email"])
 {
 	$code = safe($_GET["code"], 'sql');
 	$email = safe($_GET["email"], 'sql');
-	verify($code, $email);
+	if (verify($code, $email))
+		$renderer->redirect("Register.php");
 }
 
-print $renderer->render('index.html.twig', array());
+print $renderer->render('index.html.twig');
 ?>

@@ -7,7 +7,6 @@ class TemplateRenderer
 {
 	public $loader; // Instance of Twig_Loader_Filesystem
 	public $environment; // Instance of Twig_Environment
-	private $load_flashes = true;
 
 	public function __construct($envOptions = array(), $templateDirs = array())
 	{
@@ -25,6 +24,7 @@ class TemplateRenderer
 		);
 		$this->loader = new Twig_Loader_Filesystem($templateDirs);
 		$this->environment = new Twig_Environment($this->loader, $envOptions);
+		$_SESSION['load_flashes'] = true;
 		if (logged_in() && !verified()) {
 			create_alert("Please verify your account! Contact a system administrator if you cannot find your verification email.", 'danger');
 		}
@@ -34,16 +34,18 @@ class TemplateRenderer
 			$this->redirect();
 		}
 	}
-	public function redirect() // Redirect with to page with GET arguments
+	public function redirect($page = NULL) // Redirect to page with no GET arguments, or given page
 	{
+		if ($page == NULL)
+			$page = substr(strstr($_SERVER['REQUEST_URI'], '?', TRUE), 1);
 		if (count($_GET) > 0) {
-			$this->load_flashes = false;
-			header("Location: .." . strstr($_SERVER['REQUEST_URI'], '?', TRUE));
+			$_SESSION['load_flashes'] = false;
+			header("Location: ../" . $page);
 		}
 	}
 	public function render($templateFile, array $variables = array())
 	{
-		if ($this->load_flashes) {
+		if ($_SESSION['load_flashes']) {
 			$variables['flashes'] = $_SESSION['flashes'];
 			$_SESSION['flashes'] = array();
 		}
@@ -53,6 +55,7 @@ class TemplateRenderer
 		{
 			$UserID = safe($_COOKIE["Plink_uid"], 'sql');
 			$variables['user_email'] = get_email($UserID);
+			$variables['user_name'] = get_name($UserID);
 		}
 		return $this->environment->render($templateFile, $variables);
 	}

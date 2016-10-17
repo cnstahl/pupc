@@ -94,9 +94,10 @@ function logout()
  * Note: this function assumes that the given email is SQL-safe.
  * @param string $password the given password
  * @param string $email the given email
+ * @param string $name the given full name
  * @return boolean whether the registration was successful
  */
-function register($password, $email)
+function register($password, $email, $name)
 {
 	global $mysql_con, $rand_salt, $substr_salt;
 	date_default_timezone_set($timezone);
@@ -106,7 +107,9 @@ function register($password, $email)
 	$salt = substr(str_shuffle($rand_salt), 0, $substr_salt);
 	$password = generate_hash($password, $salt);
 	$UserID = reset(mysqli_fetch_array(mysqli_query($mysql_con, "SELECT uid FROM members ORDER BY uid DESC LIMIT 1"))) + 1; // Sets new UID to next UID in sort order
-	return mysqli_query($mysql_con, "INSERT INTO members (date, IP, type, salt, password, uid, email) VALUES ('$date', '$ip', '$type', '$salt', '$password', '$UserID', '$email')") && email_registration($email);
+	return mysqli_query($mysql_con, "INSERT INTO members (date, IP, type, salt, password, uid, email) VALUES ('$date', '$ip', '$type', '$salt', '$password', '$UserID', '$email')")
+		&& mysqli_query($mysql_con, "INSERT INTO profiles (uid, name) VALUES ($UserID, '$name')")
+		&& email_registration($email, $name);
 }
 
 /**
@@ -166,11 +169,9 @@ function registered($email)
  * Note: this function assumes that the given email is SQL-safe.
  * @param string $email the given email address
  */
-function email_registration($email)
+function email_registration($email, $name)
 {
 	global $mysql_con, $rand_gen, $substr_gen;
-	$end = strpos($email, '@');
-	$name = substr($email, 0, $end);
 	$rand = substr(str_shuffle($rand_gen), 0, $substr_gen);
 	if (mysqli_query($mysql_con, "INSERT INTO verification_codes (email, code) VALUES ('$email', '$rand')")) {
 		$to      = $email;
@@ -190,19 +191,26 @@ function email_registration($email)
  * Note: this function assumes that the given verification code and email are SQL-safe.
  * @param string $code the given verification code
  * @param string $email the given email address
+ * @return bool whether the verification was successful
  */
 function verify($code, $email)
 {
 	global $mysql_con;
+	$email = str_replace(' ', '+', $email);
+	echo $email;
 	$query = mysqli_query($mysql_con, "SELECT * FROM verification_codes WHERE code='$code' AND email='$email'");
 	if (mysqli_num_rows($query))
 	{
 		mysqli_query($mysql_con, "UPDATE members SET type=2 WHERE email='$email'");
 		mysqli_query($mysql_con, "DELETE FROM verification_codes where email='$email'");
-		create_alert("Your account has been verified. You may now register for PUPC!", 'success');
+		create_alert("Your account has been verified.", 'success');
+		return true;
 	}
 	else
+	{
 		create_alert("The verification code is invalid. Please try again.", 'info');
+		return false;
+	}
 }
 
 /** Returns whether the current user has been verified. */
@@ -784,6 +792,19 @@ function get_email($UserId)
 }
 
 /**
+ * Returns the name corresponding to the given user ID.
+ * @param string UserId the given netid
+ */
+function get_name($UserId)
+{		 
+	global $mysql_con;
+	$UserId = (int)$UserId;
+	$query = mysqli_query($mysql_con, "SELECT name FROM profiles WHERE uid=$UserId") or die(mysqli_query($mysql_con));
+	$email_array = mysqli_fetch_array($query);
+	return $email_array[0];
+}
+
+/**
  * Returns the "username" corresponding to the given user ID.
  * @param string UserId the given netid
  */
@@ -864,6 +885,8 @@ function insert_stats()
  */
 function create_alert($message, $type)
 {
+	if (!$_SESSION['load_flashes'])
+		return;
 	if (!isset($_SESSION['flashes']))
 		$_SESSION['flashes'] = array();
 	array_push($_SESSION['flashes'], array($type, $message));
