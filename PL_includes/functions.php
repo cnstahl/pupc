@@ -108,7 +108,7 @@ function register($password, $email, $name)
 	$password = generate_hash($password, $salt);
 	$UserID = reset(mysqli_fetch_array(mysqli_query($mysql_con, "SELECT uid FROM members ORDER BY uid DESC LIMIT 1"))) + 1; // Sets new UID to next UID in sort order
 	return mysqli_query($mysql_con, "INSERT INTO members (date, IP, type, salt, password, uid, email) VALUES ('$date', '$ip', '$type', '$salt', '$password', '$UserID', '$email')")
-		&& mysqli_query($mysql_con, "INSERT INTO profiles (uid, name) VALUES ($UserID, '$name')")
+		&& mysqli_query($mysql_con, "INSERT INTO profiles (uid, name, surname) VALUES ($UserID, '$name', '$surname')")
 		&& email_registration($email, $name);
 }
 
@@ -405,9 +405,10 @@ function reset_password($email, $new_password, $re_new_password) // TODO: Limit 
  **********************************/
 
 /**
- * Updates the user profile with the given name, grade, school, city, state, country, and coach.
+ * Updates the user profile with the given name, surname, grade, school, city, state, country, and coach.
  * Note: This function assumes all passed values are SQL-safe.
  * @param string $name the given name
+ * @param string $surname the given surname
  * @param string $grade the given grade
  * @param string $school the given school
  * @param string $city the given city
@@ -415,13 +416,14 @@ function reset_password($email, $new_password, $re_new_password) // TODO: Limit 
  * @param string $country the given country
  * @param string $coach the given coach
  */
-function update_profile($name, $grade, $school, $city, $state, $country, $coach)
+function update_profile($name, $surname, $grade, $school, $city, $state, $country, $coach)
 {
 	global $mysql_con;
 
 	$UserId = get_uid();
 	$success = true;
 	$success &= mysqli_query($mysql_con, "UPDATE profiles SET name='$name' WHERE uid=$UserId");
+	$success &= mysqli_query($mysql_con, "UPDATE profiles SET surname='$surname' WHERE uid=$UserId");
 	$success &= mysqli_query($mysql_con, "UPDATE profiles SET grade='$grade' WHERE uid=$UserId");
 	$success &= mysqli_query($mysql_con, "UPDATE profiles SET school='$school' WHERE uid=$UserId");
 	$success &= mysqli_query($mysql_con, "UPDATE profiles SET city='$city' WHERE uid=$UserId");

@@ -7,6 +7,7 @@ $submit = $_POST["submit"];
 
 if ($submit) {
 	$name = safe($_POST["name"], 'sql');
+	$surname = safe($_POST["surname"], 'sql');
 	$grade = safe($_POST["grade"], 'sql');
 	$school = safe($_POST["school"], 'sql');
 	$city = safe($_POST["city"], 'sql');
@@ -14,7 +15,7 @@ if ($submit) {
 	$country = safe($_POST["country"], 'sql');
 	$coach = safe($_POST["coach"], 'sql');
 
-	if (update_profile($name, $grade, $school, $city, $state, $country, $coach))
+	if (update_profile($name, $surname, $grade, $school, $city, $state, $country, $coach))
 		create_alert("Profile successfully updated.", 'success');
 	else
 		create_alert("There was a problem updating your profile. Please try again.", 'warning');
