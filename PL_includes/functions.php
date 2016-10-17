@@ -90,14 +90,15 @@ function logout()
  **********************************/
 
 /**
- * Registers the given email and password as a new member.
- * Note: this function assumes that the given email is SQL-safe.
+ * Registers the given email and password as a new member, of given name and role.
+ * Note: this function assumes that the given email, name, and role are SQL-safe.
  * @param string $password the given password
  * @param string $email the given email
  * @param string $name the given full name
+ * @param string $name the given role
  * @return boolean whether the registration was successful
  */
-function register($password, $email, $name)
+function register($password, $email, $name, $role)
 {
 	global $mysql_con, $rand_salt, $substr_salt;
 	date_default_timezone_set($timezone);
@@ -108,7 +109,7 @@ function register($password, $email, $name)
 	$password = generate_hash($password, $salt);
 	$UserID = reset(mysqli_fetch_array(mysqli_query($mysql_con, "SELECT uid FROM members ORDER BY uid DESC LIMIT 1"))) + 1; // Sets new UID to next UID in sort order
 	return mysqli_query($mysql_con, "INSERT INTO members (date, IP, type, salt, password, uid, email) VALUES ('$date', '$ip', '$type', '$salt', '$password', '$UserID', '$email')")
-		&& mysqli_query($mysql_con, "INSERT INTO profiles (uid, name, surname) VALUES ($UserID, '$name', '$surname')")
+		&& mysqli_query($mysql_con, "INSERT INTO profiles (uid, name, surname, role) VALUES ($UserID, '$name', '$surname', '$role')")
 		&& email_registration($email, $name);
 }
 
