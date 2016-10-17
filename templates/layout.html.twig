@@ -11,12 +11,14 @@
 	</head>
 	<body>
 		{% include "partials/navbar.html.twig" %}
+{% block header %}
 		<!-- Set your background image for this header on the line below. -->
 		<header class="hidden-xs" style="background-image: url('img/{% block image %}campus_crop.jpg{% endblock %}')">
 			<h1></h1>
 			<!--<hr class="small">-->
 			<span class="subheading"></span>
 		</header>
+{% endblock header %}
 		<div class="container">
 {% for flash in flashes %}
 			<div class="alert alert-{{ flash[0] }} fade in">
@@ -25,7 +27,7 @@
 			</div>
 {% endfor %}
 {% block body %}
-			<header><h1>{% block heading %}{{ title }}{% endblock %}</h1></header>
+			<h1>{% block heading %}{{ title }}{% endblock %}</h1>
 			
 			<!-- Beginning of content -->
 {% endblock body %}

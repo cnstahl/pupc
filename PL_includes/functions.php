@@ -94,11 +94,12 @@ function logout()
  * Note: this function assumes that the given email, name, and role are SQL-safe.
  * @param string $password the given password
  * @param string $email the given email
- * @param string $name the given full name
+ * @param string $name the given forename
+ * @param string $surname the given surname
  * @param string $name the given role
  * @return boolean whether the registration was successful
  */
-function register($password, $email, $name, $role)
+function register($password, $email, $name, $surname, $role)
 {
 	global $mysql_con, $rand_salt, $substr_salt;
 	date_default_timezone_set($timezone);
@@ -176,8 +177,8 @@ function email_registration($email, $name)
 	$rand = substr(str_shuffle($rand_gen), 0, $substr_gen);
 	if (mysqli_query($mysql_con, "INSERT INTO verification_codes (email, code) VALUES ('$email', '$rand')")) {
 		$to      = $email;
-		$subject = 'PUPC account registration confirmation';
-		$message = "Hello $name,<br /><br />Thank you for your interest in the Princeton University Princeton Competition<br />Please hit the link below to confirm your e-mail and begin registration!<br /><br />http://pupc.princeton.edu/?code=".$rand.'&email='.$email."<br /><br />Thank you,<br />Pavel Shibayev '15<br />Physics Department<br />PUPC secretary/ developer<br /><br />If you'd like to unsubscribe, please go here: http://pupc.princeton.edu/?action=unsubscribe&email=$email.";
+		$subject = 'PUPC account confirmation';
+		$message = "Hello $name,<br /><br />Thank you for your interest in the Princeton University Princeton Competition.<br />Please hit the link below to confirm your e-mail and begin registration!<br /><br />http://pupc.princeton.edu/?code=".$rand.'&email='.$email."<br /><br />Thank you,<br />PUPC Organizers<br /><br />If you'd like to unsubscribe, please go here: http://pupc.princeton.edu/?action=unsubscribe&email=$email.";
 		$headers = "From: PUPC Administrator <noreply@pupc.princeton.edu>\n";
 		$headers .= "Content-type: text/html; charset=iso-8859-1\n";
 		$headers .= "X-Mailer: PHP/" . phpversion() . "\n";
@@ -282,7 +283,7 @@ function register_PUPC_team($name, $uids, $year)
 	if ($status) {
 		foreach ($uids as $uid)
 			if ($uid !== 'NULL')
-				email_PUPC_team_confirmation(get_email($uid), $year);
+				email_PUPC_team_confirmation(get_email($uid), $name, $year);
 	}
 	else
 		create_alert("There was a problem with your registration. Your team name may already be taken.");
@@ -311,12 +312,14 @@ function email_PUPC_confirmation($email, $year)
 }
 
 /**
- * Sends a confirmation email of PUPC team registration of the given year to the given email address.
+ * Sends a confirmation email of PUPC team registration of the given year
+ * to the given email address for the given team name.
  * Note: this function assumes that the given email is SQL-safe.
  * @param string $email the given email address
+ * @param string $team_name the given team name
  * @param string $year the given year
  */
-function email_PUPC_team_confirmation($email, $year)
+function email_PUPC_team_confirmation($email, $team_name, $year)
 {
 	$name = get_name(get_id($email));
 	$to      = $email;
