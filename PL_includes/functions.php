@@ -217,7 +217,8 @@ function verify($code, $email)
 function verified()
 {
 	global $mysql_con;
-	$UserID = safe($_COOKIE["Plink_uid"], 'sql');
+	
+	$UserID = get_uid();
 	if (is_numeric($UserID))
 	{
 		$query = mysqli_query($mysql_con, "SELECT * FROM members WHERE uid=$UserID AND type=2");
@@ -238,6 +239,7 @@ function verified()
 function register_PUPC($uid, $site, $aid, $note, $year)
 {
 	global $mysql_con;
+	
 	date_default_timezone_set($timezone);
 	$date = date("Y-m-d H:i:s");
 	if (!verified())
@@ -249,24 +251,40 @@ function register_PUPC($uid, $site, $aid, $note, $year)
 }
 
 /**
- * Registers the given uids for the PUPC of the given year, with given format, type, and aid options and note.
- * Note: this function assumes that the given team is SQL-safe.
+ * Registers the given uids for the PUPC online test of the given year, with given team name and members.
+ * Note: this function assumes that the given team name is SQL-safe.
  * @param string $name the given team name
- * @param int array $uids the given uids array
+ * @param int array $uids the given uids array of members
  * @param int $year the given year
  * @return boolean whether the registration was successful
  */
 function register_PUPC_team($name, $uids, $year)
 {
 	global $mysql_con;
+	
 	date_default_timezone_set($timezone);
 	$date = date("Y-m-d H:i:s");
+	$uids = array_unique($uids);
+	if (count($uids) < 2) {
+		create_alert("Teams must have at least two members.", 'danger');
+		return false;
+	}
+	foreach ($uids as $uid)
+		for ($i = 1; $i <= 6; $i++)
+			if (mysqli_num_rows(mysqli_query($mysql_con, "SELECT * FROM pupc_online_$year WHERE uid$i=$uid")) > 0) {
+				create_alert("One or more of your team members is registered with another team.", 'danger');
+				return false;
+			}
 	while (count($uids) < 6)
-		array_push($uids, 'NULL'); // pad out array TODO: use NULL instead
+		array_push($uids, 'NULL'); // pad out array
 	$status = mysqli_query($mysql_con, "INSERT INTO pupc_online_$year (date, name, uid1, uid2, uid3, uid4, uid5, uid6) VALUES ('$date', '$name', $uids[0], $uids[1], $uids[2], $uids[3], $uids[4], $uids[5])");
-//	if ($status)
-//		for ($i = 0; $i < count($uids); $i++)
-//			email_PUPC_team_confirmation(get_email($uid[i]), $year);
+	if ($status) {
+		foreach ($uids as $uid)
+			if ($uid !== 'NULL')
+				email_PUPC_team_confirmation(get_email($uid), $year);
+	}
+	else
+		create_alert("There was a problem with your registration. Your team name may already be taken.");
 	return $status;
 }
 
@@ -278,9 +296,7 @@ function register_PUPC_team($name, $uids, $year)
  */
 function email_PUPC_confirmation($email, $year)
 {
-	global $mysql_con;
-	$end = strpos($email, '@');
-	$name = substr($email, 0, $end);
+	$name = get_name(get_id($email));
 	$to      = $email;
 	$subject = "PUPC $year registration confirmation";
 	$message = "Hello $name,<br /><br />Thank you for registering for PUPC $year! This e-mail confirms that you have successfully registered. ";
@@ -301,12 +317,10 @@ function email_PUPC_confirmation($email, $year)
  */
 function email_PUPC_team_confirmation($email, $year)
 {
-	global $mysql_con;
-	$end = strpos($email, '@');
-	$name = substr($email, 0, $end);
+	$name = get_name(get_id($email));
 	$to      = $email;
 	$subject = "PUPC $year registration confirmation";
-	$message = "Hello $name,<br /><br />Thank you for registering for PUPC $year! This e-mail confirms that you have successfully registered. ";
+	$message = "Hello $name,<br /><br />Thank you for registering for the PUPC $year online exam! This e-mail confirms that you have successfully been registered. ";
 //	$message .= "and your ID is 16<continent code><country ISO code><index from within country>.";
 	$message .= "We look forward to your participation!<br /><br />Best wishes,<br />PUPC Organizers";
 	$headers = "From: PUPC Administrator <noreply@pupc.princeton.edu>\n";

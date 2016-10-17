@@ -33,22 +33,30 @@ else {
 	$uid = safe($_COOKIE["Plink_uid"], 'sql');
 	// Verify that the registration form was submitted and that the email & password are correct
 	if ($submit) {
+		$success = true;
 		$uids = array();
 		for ($i = 0; $i < count($emails); $i++) {
 			$email = trim(safe($emails[$i], 'sql'));
-			if (strlen($email) > 0)
-				array_push($uids, get_id($email));
+			if (strlen($email) == 0)
+				continue;
+			$uid = get_id($email);
+			if ($uid == NULL) {
+				create_alert("User $email does not have an account.", 'danger');
+				$success = false;
+			}
+			array_push($uids, $uid);
 		}
-		if ($format == "true")
-			if (register_PUPC_team($name, $uids, $year))
-				create_alert("Registered successfully!", 'success');
+		if ($success)
+			if ($format == "true")
+				if (register_PUPC_team($name, $uids, $year))
+					create_alert("Registered successfully!", 'success');
+				else
+					;
 			else
-				create_alert("There was a problem with your registration. Your team name may already be registered.", "danger");
-		else
-			if (register_PUPC($uid, $site, $aid, $note, $year))
-				create_alert("Registered successfully!", 'success');
-			else
-				create_alert("There was a problem with your registration. You may already be registered.", "danger");
+				if (register_PUPC($uid, $site, $aid, $note, $year))
+					create_alert("Registered successfully!", 'success');
+				else
+					create_alert("There was a problem with your registration. You may already be registered.", 'danger');
 	}
 		
 	// Load page
