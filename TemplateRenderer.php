@@ -53,7 +53,7 @@ class TemplateRenderer
 		$variables['logged_in'] = logged_in();
 		if ($variables['logged_in'])
 		{
-			$UserID = safe($_COOKIE["Plink_uid"], 'sql');
+			$UserID = get_uid();
 			$variables['user_email'] = get_email($UserID);
 			$variables['user_name'] = get_name($UserID);
 		}

@@ -386,363 +386,47 @@ function reset_password($email, $new_password, $re_new_password) // TODO: Limit 
 
 
 /**********************************
- * Question and answer functions  *
+ * Profile functions              *
  *                                *
  **********************************/
 
 /**
- * 
- * @param string $title
- * @param string $content
+ * Updates the user profile with the given name, grade, school, city, state, country, and coach.
+ * Note: This function assumes all passed values are SQL-safe.
+ * @param string $name the given name
+ * @param string $grade the given grade
+ * @param string $school the given school
+ * @param string $city the given city
+ * @param string $state the given state
+ * @param string $country the given country
+ * @param string $coach the given coach
  */
-function add_question($title, $content) // Note: don't worry about this
+function update_profile($name, $grade, $school, $city, $state, $country, $coach)
 {
 	global $mysql_con;
-	$QuestionID_query = mysqli_fetch_array(mysqli_query($mysql_con, "SELECT qid FROM questions ORDER BY qid LIMIT 1"));
-	$QuestionID = $QuestionID_query[0]+1;
-	$author = $_COOKIE["Plink_uid"];
-	mysqli_query($mysql_con, "INSERT INTO questions (title, content, qid, author_id) VALUES ('".safe($title, 'sql').", ".$content.", ".$QuestionID.", ".$author.")");
+
+	$UserId = get_uid();
+	$success = true;
+	$success &= mysqli_query($mysql_con, "UPDATE profiles SET name='$name' WHERE uid=$UserId");
+	$success &= mysqli_query($mysql_con, "UPDATE profiles SET grade='$grade' WHERE uid=$UserId");
+	$success &= mysqli_query($mysql_con, "UPDATE profiles SET school='$school' WHERE uid=$UserId");
+	$success &= mysqli_query($mysql_con, "UPDATE profiles SET city='$city' WHERE uid=$UserId");
+	$success &= mysqli_query($mysql_con, "UPDATE profiles SET state='$state' WHERE uid=$UserId");
+	$success &= mysqli_query($mysql_con, "UPDATE profiles SET country='$country' WHERE uid=$UserId");
+	$success &= mysqli_query($mysql_con, "UPDATE profiles SET coach='$coach' WHERE uid=$UserId");
+	return $success;
 }
 
 /**
- * 
- * @param string $content
+ *
  */
-function add_answer($content)
+function load_profile()
 {
 	global $mysql_con;
-	$PostID_query = mysqli_fetch_array(mysqli_query($mysql_con, "SELECT post_id FROM responses ORDER BY post_id DESC LIMIT 1"), MYSQLI_NUM);
-	$PostID = $PostID_query[0]+1;
-	$author = $_COOKIE["Plink_uid"];
-	$question = mysqli_real_escape_string($mysql_con, $_GET["question"]);
-	date_default_timezone_set($timezone);
-	$date = date("d/m/Y");
-	//Note that type 1 = The Connection, and type 2 = Debates
-	mysqli_query($mysql_con, "INSERT INTO responses (type, content, post_id, author_id, question, date) VALUES (1, '$content', $PostID, '$author', '$question', '$date')");
-}
-
-/**
- * 
- * @param unknown $question
- */
-function display_answers($question)
-{
-	global $mysql_con;
-	$qid = get_qid($question);
-	$ans_query = mysqli_query($mysql_con, "SELECT content, up_votes, down_votes FROM responses WHERE question='$question' OR post_id=$qid AND type=1 ORDER BY id DESC");
-	if ($ans_query)
-		while ($content = safe(reset(mysqli_fetch_array($ans_query, MYSQLI_NUM)), "html"))
-			echo "<span class=\"list\">\n$content\n</span><hr />\n";
-}
-
-/**
- * 
- * @param string $message
- */
-function display_replies($message)
-{
-	global $mysql_con;
-	$qid = get_qid($question);
-	$ans_query = mysqli_query($mysql_con, "SELECT content FROM messages WHERE parent_id=$message ORDER BY message_id DESC");
-	if ($ans_query)
-		while ($content = safe(reset(mysqli_fetch_array($ans_query, MYSQLI_NUM)), "html"))
-			echo "<span class=\"list\">\n$content\n</span><hr />\n";
-}
-
-/** */
-function display_questions()
-{
-	global $mysql_con;
-	$Q_query = mysqli_query($mysql_con, "SELECT title FROM questions");
-	while ($title = safe(reset(mysqli_fetch_array($Q_query, MYSQLI_NUM)), "html"))
-		echo "<div class=\"media\">
-								<div class=\"media-body\">
-									 <header><h4 class=\"media-heading\"><a href=\"?question=$title#connection\">$title</a></h4></header>
-								</div>
-						  </div>";
-}
-
-/** */
-function display_recent_answers()
-{
-	global $mysql_con;
-	$Q_query = mysqli_query($mysql_con, "SELECT content, post_id FROM responses WHERE type=1 ORDER BY id DESC LIMIT 5");
-	while ($data = mysqli_fetch_array($Q_query, MYSQLI_NUM))
-	{
-		$content = safe($data[0], "html");
-		$question = safe(get_title($data[1]), "html");
-		echo "<div class=\"media\">
-								<div class=\"media-body\">
-									 <header>$content | posted in <b><a href=\"?question=$question#connection\">$question</a></b></header>
-								</div>
-						  </div>";
-	}
-}
-
-/** */
-function display_inbox()
-{
-	global $mysql_con;
-	$UserID = (int)$_COOKIE["Plink_uid"];
-	$M_query = mysqli_query($mysql_con, "SELECT subject,message_id FROM messages WHERE recipient=$UserID");
-	while ($message = mysqli_fetch_array($M_query, MYSQLI_NUM))
-	{
-		$subject = safe($message[0], "html");
-		$id = $message[1];
-		echo "<div class=\"media\">
-								<div class=\"media-body\">
-									 <header><h4 class=\"media-heading\"><a href=\"?message=$id#messenger\">$subject</a></h4></header>
-								</div>
-						  </div>";
-	}
-}
-
-/** */
-function display_offers()
-{
-	global $mysql_con;
-	$Q_query = mysqli_query($mysql_con, "SELECT quantity,subject,date,author FROM exchanges WHERE type=2");
-	while ($data = mysqli_fetch_array($Q_query, MYSQLI_NUM))
-	{
-		$quantity = safe($data[0], "html");
-		$subject = safe($data[1], "html");
-		$date = safe($data[2], "html");
-		$author = $data[3];
-		$mentor_msg = "Offering a physics mentoring session for a group of $quantity students on $subject, on $date";
-		echo "<div class=\"media\">
-	<li>
-		<header><h4 class=\"media-heading\"><a href=\"?to=$author&subject=$mentor_msg#messenger\">Physics mentoring session on $subject for a group of $quantity students, on $date</a></h4></header>
-	</li>
-</div>";
-		
-	}
-}
-
-/** */
-function display_requests()
-{
-	global $mysql_con;
-	$Q_query = mysqli_query($mysql_con, "SELECT quantity,subject,date,author FROM exchanges WHERE type=1");
-	while ($data = mysqli_fetch_array($Q_query, MYSQLI_NUM))
-	{
-		$quantity = safe($data[0], "html");
-		$subject = safe($data[1], "html");
-		$date = safe($data[2], "html");
-		$author = safe($data[3], "html");
-		$mentor_msg = "Request for a physics mentoring session with $quantity students on $subject, on $date";
-		echo "<div class=\"media\">
-	<li>
-		<header><h4 class=\"media-heading\"><a href=\"?&to=$author&subject=$mentor_msg#messenger\">Physics mentoring session on $subject with $quantity students, on $date</a></h4></header>
-	</li>
-</div>";
-		
-	}
-}
-
-/**
- * 
- * @param string $subject
- * @param string $date
- * @param string $quantity
- * @param string $type
- */
-function add_pass($subject, $date, $quantity, $type)
-{
-	global $mysql_con;
-	$PassID_query = mysqli_fetch_array(mysqli_query($mysql_con, "SELECT pass_id FROM exchanges ORDER BY pass_id LIMIT 1"), MYSQLI_NUM);// or die("horses".mysqli_error($mysql_con));
-	$PassID = $PassID_query[0]+1;
-	$author = (int)$_COOKIE["Plink_uid"];
-	$subject = safe($subject, "sql");
-	$date = safe($date, "sql");
-	$quantity = (int)$quantity;
-	$type = (int)$type;
-	//Note that type 1 = offer, and type 2 = requests
-	mysqli_query($mysql_con, "INSERT INTO exchanges (quantity, subject, date, author, type, pass_id) VALUES ($quantity, '$subject', '$date', $author, $type, $PassID)") or die("horses".mysqli_error($mysql_con));
-}
-
-/**
- * 
- * @param unknown $question
- * @return unknown
- */
-function get_question($question)
-{
-	global $mysql_con;
-	$Q_query = mysqli_query($mysql_con, "SELECT title,content FROM questions WHERE title='$question'");
-	$question = mysqli_fetch_array($Q_query, MYSQLI_NUM);
-	$question[0] = safe($question[0], "html");
-	$question[1] = safe($question[1], "html");
-	return $question;
-}
-
-/**
- * 
- * @param string $id
- * @return unknown
- */
-function get_message($id)
-{
-	global $mysql_con;
-	$M_query = mysqli_query($mysql_con, "SELECT subject,content,date,recipient,sender FROM messages WHERE message_id=$id") or die(mysqli_error($mysql_con));
-	$message = mysqli_fetch_array($M_query, MYSQLI_NUM);
-	$message[0] = safe($message[0], "html");
-	$message[1] = safe($message[1], "html");
-	$message[2] = safe($message[2], "html");
-	$message[3] = safe($message[3], "html");
-	$message[4] = safe($message[4], "html");
-	return $message;
-}
-
-/**
- * 
- * @param unknown $question
- * @return unknown
- */
-function get_qid($question)
-{
-	global $mysql_con;
-	$Q_query = mysqli_query($mysql_con, "SELECT qid FROM questions WHERE title='$question'");
-	$qid = mysqli_fetch_array($Q_query, MYSQLI_NUM);
-	$qid = $qid[0];
-	return $qid;
-}
-
-/**
- * 
- * @param string $title
- * @param string $description
- * @param string $video_id
- * @param string $bio
- */
-function add_debate($title, $description, $video_id, $bio)
-{
-	global $mysql_con;
-	$DebateID_query = mysqli_fetch_array(mysqli_query($mysql_con, "SELECT did FROM debates ORDER BY did LIMIT 1"));
-	$DebateID = $DebateID_query[0]+1;
-	$author = $_COOKIE["Plink_uid"];
-	mysqli_query($mysql_con, "INSERT INTO debates (title, description, video_id, did, author_id, bio) VALUES ('$title', '$description', '$video_id', $DebateID, '$author', '$bio')") or die(mysqli_error($mysql_con));
-}
-
-/**
- * 
- * @param string $content
- * @param unknown $yn
- */
-function add_response($content, $yn)
-{
-	global $mysql_con;
-	$PostID_query = mysqli_fetch_array(mysqli_query($mysql_con, "SELECT post_id FROM responses WHERE type=2 ORDER BY post_id LIMIT 1"), MYSQLI_NUM);
-	$PostID = $PostID_query[0]+1;
-	$author = $_COOKIE["Plink_uid"];
-	$debate = $_GET["debate"];
-	date_default_timezone_set($timezone);
-	$date = date("d/m/Y");
-	//Note that type 1 = The Connection, type 2 = Debates
-	mysqli_query($mysql_con, "INSERT INTO responses (type, content, post_id, author_id, question, date, yn) VALUES (2, '$content', $PostID, '$author', '$debate', '$date', $yn)");
-}
-
-/**
- * 
- * @param string $recipient
- * @param string $subject
- * @param string $message
- */
-function send_message($recipient, $subject, $message)
-{
-	global $mysql_con;
-	$MessageID_query = mysqli_fetch_array(mysqli_query($mysql_con, "SELECT message_id FROM messages ORDER BY message_id LIMIT 1"), MYSQLI_NUM);
-	$MessageID = $MessageID_query[0]+1;
-	$sender = $_COOKIE["Plink_uid"];
-	date_default_timezone_set($timezone);
-	$date = date("d/m/Y");
-	mysqli_query($mysql_con, "INSERT INTO messages (message_id, recipient, sender, subject, content, date) VALUES ($MessageID, '$recipient', '$sender', '$subject', '$message', '$date')") or die(mysqli_error($mysql_con));
-}
-
-/**
- * 
- * @param unknown $parent
- * @param string $message
- */
-function add_reply($parent, $message)
-{
-	global $mysql_con;
-	$MessageID_query = mysqli_fetch_array(mysqli_query($mysql_con, "SELECT message_id FROM messages ORDER BY message_id LIMIT 1"), MYSQLI_NUM);
-	$MessageID = $MessageID_query[0]+1;
-	$sender = $_COOKIE["Plink_uid"];
-	$parent = (int)$parent;
-	$message = safe($message, "sql");
-	date_default_timezone_set($timezone);
-	$date = date("d/m/Y");
-	mysqli_query($mysql_con, "INSERT INTO messages (message_id, sender, content, date, parent_id) VALUES ($MessageID, '$sender', '$message', '$date', '$parent')") or die(mysqli_error($mysql_con));
-}
-
-/**
- * 
- * @param unknown $debate
- */
-function display_responses($debate)
-{
-	global $mysql_con;
-	$ans_query = mysqli_query($mysql_con, "SELECT content, date, author_id, up_votes, down_votes, yn FROM responses WHERE question='$debate' AND type=2 ORDER BY post_id DESC");
-	while ($content = mysqli_fetch_array($ans_query, MYSQLI_NUM))
-	{
-		$contents = safe($content[0], "html");
-		date_default_timezone_set($timezone);
-		$date = safe($content[1], "html");
-		$uid = $content[2];
-		$username = get_username($content[2]);
-
-		$prnt = "<span class=\"agree\"><b>$username ($date):</b><br />\n$contents\n<hr />\n</span>";
-		echo $prnt;
-	}
-}
-
-/** */
-function display_debates()
-{
-	global $mysql_con;
-	$D_query = mysqli_query($mysql_con, "SELECT title, video_id, description FROM debates");
-	while ($info = mysqli_fetch_array($D_query, MYSQLI_NUM))
-	{
-		$title = safe($info[0], "html");
-		$thumb = safe($info[1], "html");
-		$description = safe($info[2], "html");
-		echo "<article class=\"media\">
-								<div class=\"media-body\">
-									 <header><h4 class=\"media-heading\"><img src=\"http://i2.ytimg.com/vi/$thumb/default.jpg\" /> <a href=\"?debate=$title\">$title</a></h4> <i>$description</i></header>
-								</div>
-						  </article>";
-	}
-}
-
-/**
- * 
- * @param unknown $debate
- * @return unknown
- */
-function get_debate($debate)
-{
-	global $mysql_con;
-	$D_query = mysqli_query($mysql_con, "SELECT title,description,video_id,bio FROM debates WHERE title='$debate'");
-	$debate = mysqli_fetch_array($D_query, MYSQLI_NUM);
-	array_walk($debate, 'safe', "html");
-	return $debate;
-}
-
-/**
- * 
- * @return boolean
- */
-function administrator()
-{
-	global $mysql_con;
-	$UserID = $_COOKIE["Plink_uid"];
-	if (is_numeric($UserID))
-	{
-		$query = mysqli_query($mysql_con, "SELECT * FROM members WHERE uid=$UserID AND type=1");
-		if (mysqli_num_rows($query))
-			return true;
-	}
+	
+	$UserId = get_uid();
+	$query = mysqli_query($mysql_con, "SELECT * FROM profiles WHERE uid=$UserId");
+	return mysqli_fetch_array($query);
 }
 
 
@@ -776,6 +460,14 @@ function get_salt($username)
 	$query = mysqli_query($mysql_con, "SELECT salt FROM members WHERE email='$username'") or die(mysqli_query($mysql_con));
 	$salt = mysqli_fetch_array($query, MYSQL_NUM);
 	return $salt[0];
+}
+
+/**
+ * Returns the user ID of the currently logged in user.
+ */
+function get_uid()
+{
+	return safe($_COOKIE["Plink_uid"], 'sql');
 }
 
 /**
