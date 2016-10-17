@@ -1,10 +1,12 @@
 {% extends "layout.html.twig" %}
 
-{% set title = "Registration" %}
+{% set title = "User Profile" %}
 
 {% block image %}{{ parent() }}{% endblock %}
 {% block body %}
 	{{ parent() }}
+
+	<h2>{{ role }}</h2>
 
 	<form role="form" action="" method="post" class="form-horizontal">
 		<div class="form-group">
@@ -15,10 +17,12 @@
 			<label for="surname" class="col-xs-4 col-sm-2 control-label">Surname:</label>
 			<div class="col-sm-10"><input type="text" class="form-control" name="surname" value="{{ surname }}"></input></div>
 		</div>
+{% if role == "Competitor" %}
 		<div class="form-group">
 			<label for="grade" class="col-xs-4 col-sm-2 control-label">Grade:</label>
 			<div class="col-sm-10"><input type="text" class="form-control" name="grade" value="{{ grade }}"></input></div>
 		</div>
+{% endif %}
 		<div class="form-group">
 			<label for="school" class="col-xs-4 col-sm-2 control-label">School:</label>
 			<div class="col-sm-10"><input type="text" class="form-control" name="school" value="{{ school }}"></input></div>
@@ -35,10 +39,12 @@
 			<label for="country" class="col-xs-4 col-sm-2 control-label">Country:</label>
 			<div class="col-sm-10"><input type="text" class="form-control" name="country" value="{{ country }}"></input></div>
 		</div>
+{% if role == "Competitor" %}
 		<div class="form-group">
 			<label for="coach" class="col-xs-4 col-sm-2 control-label">Coach:</label>
 			<div class="col-sm-10"><input type="text" class="form-control" name="coach" value="{{ coach }}"></input></div>
 		</div>
+{% endif %}
 		<button type="submit" name="submit" value="true" class="btn btn-default">Update</button>
 	</form>
 {% endblock body %}
