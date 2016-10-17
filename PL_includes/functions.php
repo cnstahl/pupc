@@ -233,6 +233,8 @@ function register_PUPC($uid, $aid, $note, $year)
 	global $mysql_con;
 	date_default_timezone_set($timezone);
 	$date = date("Ymd H:i:s");
+	if (!verified())
+		return 0;
 	$status = mysqli_query($mysql_con, "INSERT INTO pupc_$year (date, uid, aid, notes) VALUES ('$date', $uid, $aid, '$note')");
 	if ($status)
 		email_PUPC_confirmation(get_email($uid), $year);

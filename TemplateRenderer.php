@@ -25,6 +25,9 @@ class TemplateRenderer
 		);
 		$this->loader = new Twig_Loader_Filesystem($templateDirs);
 		$this->environment = new Twig_Environment($this->loader, $envOptions);
+		if (logged_in() && !verified()) {
+			create_alert("Please verify your account! Contact a system administrator if you cannot find your verification email.", 'danger');
+		}
 		if ($_GET["logout"]) {
 			logout();
 			create_alert("Logged out successfully.", 'info');
@@ -38,7 +41,7 @@ class TemplateRenderer
 			header("Location: .." . strstr($_SERVER['REQUEST_URI'], '?', TRUE));
 		}
 	}
-	public function render($templateFile, array $variables)
+	public function render($templateFile, array $variables = array())
 	{
 		if ($this->load_flashes) {
 			$variables['flashes'] = $_SESSION['flashes'];

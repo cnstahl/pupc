@@ -45,11 +45,10 @@ else {
 	// Must be authenticated to register for PUPC
 	if (!logged_in()) {
 		create_alert("Please log in before registering.", "warning");
-		print $renderer->render('MakeAccount.html.twig', array());
+		print $renderer->render('Login.html.twig', array());
 	}
 	else if (!verified()) {
-		create_alert("Please verify your account before registering.");
-		print $renderer->render('MakeAccount.html.twig', array());
+		print $renderer->render('Blank.html.twig');
 	}
 	else {
 		$uid = safe($_COOKIE["Plink_uid"], 'sql');
