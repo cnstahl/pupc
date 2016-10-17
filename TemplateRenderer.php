@@ -37,11 +37,12 @@ class TemplateRenderer
 	public function redirect($page = NULL) // Redirect to page with no GET arguments, or given page
 	{
 		if ($page == NULL)
-			$page = substr(strstr($_SERVER['REQUEST_URI'], '?', TRUE), 1);
-		if (count($_GET) > 0) {
-			$_SESSION['load_flashes'] = false;
-			header("Location: ../" . $page);
-		}
+			if (count($_GET) > 0)
+				$page = substr(strstr($_SERVER['REQUEST_URI'], '?', TRUE), 1);
+			else
+				return;
+		$_SESSION['load_flashes'] = false;
+		header("Location: ../" . $page);
 	}
 	public function render($templateFile, array $variables = array())
 	{
