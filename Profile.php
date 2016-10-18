@@ -6,7 +6,7 @@ $renderer = new TemplateRenderer();
 $submit = $_POST["submit"];
 if (!logged_in()) {
 	create_alert("Please log in to see your profile.", 'warning');
-	$renderer->redirect('');
+	$renderer->redirect('.');
 }
 else {
 	if ($submit) {
