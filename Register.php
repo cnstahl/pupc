@@ -23,7 +23,7 @@ array_push($emails, $_POST["email6"]);
 
 // Must be authenticated to register for PUPC
 if (!logged_in()) {
-	create_alert("Please log in before registering.", 'warning');
+	create_alert("Please log in to your account to register for the competition.", 'warning');
 	print $renderer->render('Login.html.twig');
 }
 else if (!verified()) {
