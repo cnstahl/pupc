@@ -5,6 +5,8 @@
 }
 #HomeBanner {
 	background-color: #EE7F2D;
+	padding-top: 2em;
+	padding-bottom: 3em;
 }
 #HomeNews {
 	background-color: #000;

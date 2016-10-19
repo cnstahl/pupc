@@ -44,6 +44,9 @@
 {% else %}
 							<li><a class="hidden-sm hidden-md hidden-lg">Signed in as {{ user_name }}</a></li>
 							<li><a href="Profile.php">Profile</a></li>
+{% if admin %}
+							<li><a href="Admin.php">Admin</a></li>
+{% endif %}
 							<li class="hidden-sm hidden-md hidden-lg"><a href="?logout=true">Logout</a></li>
 {% endif %}
 						</ul>
