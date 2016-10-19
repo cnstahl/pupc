@@ -7,9 +7,9 @@ $submit = $_POST["submit"];
 
 $password = $_POST["password"];
 $repassword = $_POST["repassword"];
-$email = $_POST["email"];
-$name = $_POST["name"];
-$surname = $_POST["surname"];
+$email = trim($_POST["email"]);
+$name = trim($_POST["name"]);
+$surname = trim($_POST["surname"]);
 $role = $_POST["role"];
 
 if ($submit) { // Submitted account registration

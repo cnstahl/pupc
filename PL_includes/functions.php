@@ -266,9 +266,14 @@ function register_PUPC_team($name, $uids, $year)
 	
 	date_default_timezone_set($timezone);
 	$date = date("Y-m-d H:i:s");
+	$name = trim($name);
+	if (count($name) == 0) {
+		create_alert("Team names must be non-empty.", 'danger');
+		return false;
+	}
 	$uids = array_unique($uids);
-	if (count($uids) < 2) {
-		create_alert("Teams must have at least two members.", 'danger');
+	if (count($uids) < 1) {
+		create_alert("Teams must have at least one member.", 'danger');
 		return false;
 	}
 	foreach ($uids as $uid)
@@ -281,9 +286,13 @@ function register_PUPC_team($name, $uids, $year)
 		array_push($uids, 'NULL'); // pad out array
 	$status = mysqli_query($mysql_con, "INSERT INTO pupc_online_$year (date, name, uid1, uid2, uid3, uid4, uid5, uid6) VALUES ('$date', '$name', $uids[0], $uids[1], $uids[2], $uids[3], $uids[4], $uids[5])");
 	if ($status) {
+		$names = array();
 		foreach ($uids as $uid)
 			if ($uid !== 'NULL')
-				email_PUPC_team_confirmation(get_email($uid), $name, $year);
+				array_push($names, get_name($uid) . " " . get_surname($uid));
+		foreach ($uids as $uid)
+			if ($uid !== 'NULL')
+				email_PUPC_team_confirmation(get_email($uid), $name, $names, $year);
 	}
 	else
 		create_alert("There was a problem with your registration. Your team name may already be taken.");
@@ -300,8 +309,8 @@ function email_PUPC_confirmation($email, $year)
 {
 	$name = get_name(get_id($email));
 	$to      = $email;
-	$subject = "PUPC $year registration confirmation";
-	$message = "Hello $name,<br /><br />Thank you for registering for PUPC $year! This e-mail confirms that you have successfully registered. ";
+	$subject = "PUPC $year registration confirmation: Onsite Exam";
+	$message = "Hello $name,<br /><br />Thank you for registering for PUPC $year onsite test! This e-mail confirms that you have successfully registered. ";
 //	$message .= "and your ID is 16<continent code><country ISO code><index from within country>.";
 	$message .= "We look forward to your participation!<br /><br />Best wishes,<br />PUPC Organizers";
 	$headers = "From: PUPC Administrator <noreply@pupc.princeton.edu>\n";
@@ -313,18 +322,22 @@ function email_PUPC_confirmation($email, $year)
 
 /**
  * Sends a confirmation email of PUPC team registration of the given year
- * to the given email address for the given team name.
+ * to the given email address for the given team name and member names.
  * Note: this function assumes that the given email is SQL-safe.
  * @param string $email the given email address
+ * @param string $names the given names
  * @param string $team_name the given team name
  * @param string $year the given year
  */
-function email_PUPC_team_confirmation($email, $team_name, $year)
+function email_PUPC_team_confirmation($email, $team_name, $names, $year)
 {
 	$name = get_name(get_id($email));
 	$to      = $email;
-	$subject = "PUPC $year registration confirmation";
-	$message = "Hello $name,<br /><br />Thank you for registering for the PUPC $year online exam! This e-mail confirms that you have successfully been registered. ";
+	$subject = "PUPC $year registration confirmation: Online Part";
+	$message = "Hello $name,<br /><br />Thank you for registering for the PUPC $year online part! This e-mail confirms that your team, $team_name, has successfully been registered with the following members: ";
+	for ($i = 0; $i < count($names)-1; $i++)
+		$message .= "(" . ($i+1) . ") " . $names[$i] . ", ";
+	$message .= "(" . ($i+1) . ") " . $names[$i] . ". ";
 //	$message .= "and your ID is 16<continent code><country ISO code><index from within country>.";
 	$message .= "We look forward to your participation!<br /><br />Best wishes,<br />PUPC Organizers";
 	$headers = "From: PUPC Administrator <noreply@pupc.princeton.edu>\n";
@@ -512,6 +525,19 @@ function get_name($UserId)
 	global $mysql_con;
 	$UserId = (int)$UserId;
 	$query = mysqli_query($mysql_con, "SELECT name FROM profiles WHERE uid=$UserId") or die(mysqli_query($mysql_con));
+	$email_array = mysqli_fetch_array($query);
+	return $email_array[0];
+}
+
+/**
+ * Returns the surname corresponding to the given user ID.
+ * @param string UserId the given netid
+ */
+function get_surname($UserId)
+{		 
+	global $mysql_con;
+	$UserId = (int)$UserId;
+	$query = mysqli_query($mysql_con, "SELECT surname FROM profiles WHERE uid=$UserId") or die(mysqli_query($mysql_con));
 	$email_array = mysqli_fetch_array($query);
 	return $email_array[0];
 }
