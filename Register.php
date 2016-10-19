@@ -6,13 +6,13 @@ $renderer = new TemplateRenderer();
 $year = 2016; // Be sure to make the database table before updating this value
 
 // Set registration variables
-$submit = $_POST["submit"];
+$submit = safe($_POST["submit"], 'sql');
 
-$format = $_POST["format"];
-$site = $_POST["site"];
-$aid = $_POST["aid"];
-$note = $_POST["note"];
-$name = $_POST["name"];
+$format = safe($_POST["format"], 'sql');
+$site = safe($_POST["site"], 'sql');
+$aid = safe($_POST["aid"], 'sql');
+$note = safe($_POST["note"], 'sql');
+$name = safe($_POST["name"], 'sql');
 $emails = array();
 array_push($emails, $_POST["email1"]);
 array_push($emails, $_POST["email2"]);

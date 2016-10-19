@@ -178,7 +178,7 @@ function email_registration($email, $name)
 	if (mysqli_query($mysql_con, "INSERT INTO verification_codes (email, code) VALUES ('$email', '$rand')")) {
 		$to      = $email;
 		$subject = 'PUPC account confirmation';
-		$message = "Hello $name,<br /><br />Thank you for your interest in the Princeton University Princeton Competition.<br />Please hit the link below to confirm your e-mail and begin registration!<br /><br />http://pupc.princeton.edu/?code=".$rand.'&email='.$email."<br /><br />Thank you,<br />PUPC Organizers<br /><br />If you'd like to unsubscribe, please go here: http://pupc.princeton.edu/?action=unsubscribe&email=$email.";
+		$message = "Hello $name,<br /><br />Thank you for your interest in the Princeton University Physics Competition.<br />Please hit the link below to confirm your e-mail and begin registration!<br /><br />http://pupc.princeton.edu/?code=".$rand.'&email='.$email."<br /><br />Thank you,<br />PUPC Organizers<br /><br />If you'd like to unsubscribe, please go here: http://pupc.princeton.edu/?action=unsubscribe&email=$email.";
 		$headers = "From: PUPC Administrator <noreply@pupc.princeton.edu>\n";
 		$headers .= "Content-type: text/html; charset=iso-8859-1\n";
 		$headers .= "X-Mailer: PHP/" . phpversion() . "\n";
@@ -248,7 +248,7 @@ function register_PUPC($uid, $site, $aid, $note, $year)
 		return 0;
 	$status = mysqli_query($mysql_con, "INSERT INTO pupc_$year (date, uid, site, aid, notes) VALUES ('$date', $uid, '$site', $aid, '$note')");
 	if ($status)
-		email_PUPC_confirmation(get_email($uid), $year);
+		email_PUPC_confirmation(get_email($uid), $site, $year);
 	return $status;
 }
 
@@ -305,12 +305,12 @@ function register_PUPC_team($name, $uids, $year)
  * @param string $email the given email address
  * @param string $year the given year
  */
-function email_PUPC_confirmation($email, $year)
+function email_PUPC_confirmation($email, $site, $year)
 {
 	$name = get_name(get_id($email));
 	$to      = $email;
 	$subject = "PUPC $year registration confirmation: Onsite Exam";
-	$message = "Hello $name,<br /><br />Thank you for registering for PUPC $year onsite test! This e-mail confirms that you have successfully registered. ";
+	$message = "Hello $name,<br /><br />Thank you for registering for PUPC $year onsite test in $site! This e-mail confirms that you have successfully registered. ";
 //	$message .= "and your ID is 16<continent code><country ISO code><index from within country>.";
 	$message .= "We look forward to your participation!<br /><br />Best wishes,<br />PUPC Organizers";
 	$headers = "From: PUPC Administrator <noreply@pupc.princeton.edu>\n";
