@@ -18,8 +18,9 @@ else {
 		$state = safe($_POST["state"], 'sql');
 		$country = safe($_POST["country"], 'sql');
 		$coach = safe($_POST["coach"], 'sql');
+		$hash = safe($_POST["hash"], 'sql');
 	
-		if (update_profile($name, $surname, $grade, $school, $city, $state, $country, $coach))
+		if (update_profile($name, $surname, $grade, $school, $city, $state, $country, $coach, $hash))
 			create_alert("Profile successfully updated.", 'success');
 		else
 			create_alert("There was a problem updating your profile. Please try again.", 'warning');

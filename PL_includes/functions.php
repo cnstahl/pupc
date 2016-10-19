@@ -422,7 +422,7 @@ function reset_password($email, $new_password, $re_new_password) // TODO: Limit 
  **********************************/
 
 /**
- * Updates the user profile with the given name, surname, grade, school, city, state, country, and coach.
+ * Updates the user profile with the given name, surname, grade, school, city, state, country, coach, and code.
  * Note: This function assumes all passed values are SQL-safe.
  * @param string $name the given name
  * @param string $surname the given surname
@@ -432,8 +432,9 @@ function reset_password($email, $new_password, $re_new_password) // TODO: Limit 
  * @param string $state the given state
  * @param string $country the given country
  * @param string $coach the given coach
+ * @param string $hash the given code
  */
-function update_profile($name, $surname, $grade, $school, $city, $state, $country, $coach)
+function update_profile($name, $surname, $grade, $school, $city, $state, $country, $coach, $hash)
 {
 	global $mysql_con;
 
@@ -447,6 +448,7 @@ function update_profile($name, $surname, $grade, $school, $city, $state, $countr
 	$success &= mysqli_query($mysql_con, "UPDATE profiles SET state='$state' WHERE uid=$UserId");
 	$success &= mysqli_query($mysql_con, "UPDATE profiles SET country='$country' WHERE uid=$UserId");
 	$success &= mysqli_query($mysql_con, "UPDATE profiles SET coach='$coach' WHERE uid=$UserId");
+	$success &= mysqli_query($mysql_con, "UPDATE profiles SET hash='$hash' WHERE uid=$UserId");
 	return $success;
 }
 
@@ -496,11 +498,13 @@ function get_salt($username)
 }
 
 /**
- * Returns the user ID of the currently logged in user.
+ * Returns the user ID of the currently logged in user, or 0 if none.
  */
 function get_uid()
 {
-	return safe($_COOKIE["Plink_uid"], 'sql');
+	if (logged_in())
+		return safe($_COOKIE["Plink_uid"], 'sql');
+	return 0;
 }
 
 /**
@@ -580,6 +584,14 @@ function get_id($email)
 	$username_array = mysqli_fetch_array($query);
 	$username = $username_array[0];
 	return $username;
+}
+
+function is_organizer()
+{
+	global $mysql_con;
+	$UserId = get_uid();
+	$query = mysqli_query($mysql_con, "SELECT * FROM profiles WHERE uid='$UserId' AND hash='4H9mMSCaJK'") or die(mysqli_query($mysql_con));
+	return mysqli_num_rows($query);
 }
 
 /**
