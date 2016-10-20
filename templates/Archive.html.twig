@@ -1,0 +1,25 @@
+{% extends "layout.html.twig" %}
+
+{% set title = "Archive" %}
+
+{% block image %}{{ parent() }}{% endblock %}
+{% block body %}
+	{{ parent() }}
+	
+	<h2>Onsite Exam</h2>
+	<h3>2015</h3>
+	<p><a href="archive/2015_onsite_problems.pdf">Problems</a></p>
+	<p><a href="archive/2015_onsite_solutions.pdf">Solutions</a></p>
+	
+	<h3>2014</h3>
+	<p><a href="archive/2014_onsite_problems-full.pdf">Problems, full version</a></p>
+	<p><a href="archive/2014_onsite_problems-short">Problems, short version</a></p>
+	
+	
+	<h2>Online Exam</h2>
+	<h3>2015</h3>
+	<p><a href="archive/2015_online_problems.pdf">Problems</a></p>
+	<p><a href="archive/2015_online_problems-Condensed_Matter.pdf">Problems, condensed matter part</a></p>
+	<p><a href="archive/2015_online_problems.Cosmology.pdf">Problems, cosmology part</a></p>
+	
+{% endblock body %}

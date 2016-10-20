@@ -18,11 +18,14 @@ if ($submit) { // Submitted account registration
 	$surname = safe($surname, "sql");
 	$role = safe($role, "sql");
 	
-	// Verify that the registration form was submitted and that the email & password are correct
-	if (valid_registration($password, $repassword, $email) && register($password, $email, $name, $surname, $role))
-		$register_result = create_alert("Account created successfully! Verification email sent to $email.", "info");
+	if (count($name) > 0 && count($surname) > 0)
+		// Verify that the registration form was submitted and that the email & password are correct
+		if (valid_registration($password, $repassword, $email) && register($password, $email, $name, $surname, $role))
+			$register_result = create_alert("Account created successfully! Verification email sent to $email.", "info");
+		else
+			$register_result = create_alert(registration_error($password, $repassword, $email), "danger");
 	else
-		$register_result = create_alert(registration_error($password, $repassword, $email), "danger");
+		$register_result = create_alert("You must fill out your full name.", 'danger');
 	
 	// Load page
 	if ($register_result == "success")
