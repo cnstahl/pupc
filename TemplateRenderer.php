@@ -51,6 +51,7 @@ class TemplateRenderer
 			$_SESSION['flashes'] = array();
 		}
 		$variables['page'] = $_SERVER['REQUEST_URI'];
+		$variables['admin'] = is_organizer();
 		$variables['logged_in'] = logged_in();
 		if ($variables['logged_in'])
 		{

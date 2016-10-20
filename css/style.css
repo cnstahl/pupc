@@ -1,10 +1,18 @@
 /*  Website styling, by Ming-Yee Tsang */
 
+@font-face {
+	font-family: Railway,
+	src: url(./fonts/Railway.otf) format('opentype');
+	font-variant: normal;
+	font-weight: normal;
+	font-style: normal;
+}
+
 * {
-	font-family: "Palatino Linotype", Palatino, serif;
+	font-family: Lora, "Palatino Linotype", Palatino, serif;
 }
 #HomeBanner {
-	background-color: #EE7F2D;
+//	background-color: #EE7F2D;
 	padding-top: 2em;
 	padding-bottom: 3em;
 }
@@ -14,21 +22,22 @@
 	font-size: 1.5em;
 	padding: 2em 0;
 }
-#HomeNews a {
-	color: #EE7F2D;
+#HomeNews * {
+	font-family: Railway, "Open Sans", sans-serif;
+	font-size: 18pt;
 }
-#Sponsors img {
+#Sponsors img, #Collaborators img {
 	max-height: 100px;
 	max-width: 100%;
 	display: block;
 	margin: auto;
 }
 @media screen and (min-width: 768px) {
-	#Sponsors .row {
+	#Sponsors .row, #Collaborators .rom {
 		display: flex;
 		align-items: center;
 	}
-	#Sponsors img:not(:hover) {
+	#Sponsors img:not(:hover), #Collaborators img:not(:hover) {
 		-webkit-filter: saturate(0) opacity(.6);
 		-moz-filter: saturate(0) opacity(.6);
 		filter: saturate(0) opacity(.6);
@@ -55,6 +64,24 @@ body > header {
 	min-height: 200px;
 	max-height: 500px;
 }
+div.container > p {
+	font-size: 14pt;
+	max-width: 40pc;
+}
+h1 {
+	font-size: 32pt;
+}
+h2 {
+	text-transform: lowercase;
+	font-variant: small-caps;
+	letter-spacing: .15em;
+}
+h3 {
+	
+}
+a {
+	color: #EE7F2D;
+}
 .navbar-brand > img {
 	height: 100%;
 }
@@ -68,7 +95,6 @@ alert ul {
 alert ul > li::before {
 	content: "\2013\2002";
 }
-
 .form-horizontal .control-label {
 	text-align: left;
 }

@@ -142,7 +142,7 @@ function registration_error($password, $repassword, $email) // TODO: do email va
 	$email_query = mysqli_query($mysql_con, "SELECT * FROM members WHERE email='$email'");
 	$error = "There was a problem with your registration: <ul>";
 	if (mysqli_num_rows($email_query))
-		$error .= "<li>The email you entered has already been registered.</li>";
+		$error .= "<li>An account with this email already exists. <a href=\"Reset.php\">Forgot your password</a>?</li>";
 //	if (!preg_match('#[a-zA-Z0-9]+#i', $email))
 //		$error .= "<li>The email you entered is invalid.</li>";
 	if (strlen($password) < 7 || strlen($password) > 100)
@@ -591,7 +591,7 @@ function is_organizer()
 	global $mysql_con;
 	$UserId = get_uid();
 	$query = mysqli_query($mysql_con, "SELECT * FROM profiles WHERE uid='$UserId' AND hash='4H9mMSCaJK'") or die(mysqli_query($mysql_con));
-	return mysqli_num_rows($query);
+	return mysqli_num_rows($query) == 1;
 }
 
 /**
