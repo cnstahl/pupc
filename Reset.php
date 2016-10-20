@@ -37,7 +37,7 @@ else if ($submit) // POST request submitted
 			$renderer->redirect();
 }
 
-print $renderer->render('Reset.php.twig', array(
+print $renderer->render('Reset.html.twig', array(
 	'reset' => $reset,
 	'code' => $code,
 	'email' => $email	

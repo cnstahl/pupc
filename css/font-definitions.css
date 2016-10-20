@@ -1,0 +1,66 @@
+@font-face {
+	font-family: 'Semplicita';
+	src: url('Semplicita-Medium.eot');                                             /* IE9 Compat Modes */
+	src: url('Semplicita-Medium.eot?#iefix') format('embedded-opentype'),          /* IE6-IE8 */
+	     url('Semplicita-Medium.otf')  format('opentype'),
+	     url('Semplicita-Medium.woff') format('woff'),                             /* Pretty Modern Browsers */
+	     url('Semplicita-Medium.ttf')  format('truetype'),                         /* Safari, Android, iOS */
+	     url('Semplicita-Medium.svg#Semplicita-Medium') format('svg');             /* Legacy iOS */
+	font-weight: normal;
+	font-style: normal;
+}
+@font-face {
+	font-family: 'Semplicita';
+	src: url('Semplicita-MediumItalic.eot');                                       /* IE9 Compat Modes */
+	src: url('Semplicita-MediumItalic.eot?#iefix') format('embedded-opentype'),    /* IE6-IE8 */
+	     url('Semplicita-MediumItalic.otf')  format('opentype'),
+	     url('Semplicita-MediumItalic.woff') format('woff'),                       /* Pretty Modern Browsers */
+	     url('Semplicita-MediumItalic.ttf')  format('truetype'),                   /* Safari, Android, iOS */
+	     url('Semplicita-MediumItalic.svg#Semplicita-MediumItalic') format('svg'); /* Legacy iOS */
+	font-weight: normal;
+	font-style: italic;
+}
+@font-face {
+	font-family: 'Semplicita';
+	src: url('Semplicita-Bold.eot');                                               /* IE9 Compat Modes */
+	src: url('Semplicita-Bold.eot?#iefix') format('embedded-opentype'),            /* IE6-IE8 */
+	     url('Semplicita-Bold.otf')  format('opentype'),
+	     url('Semplicita-Bold.woff') format('woff'),                               /* Pretty Modern Browsers */
+	     url('Semplicita-Bold.ttf')  format('truetype'),                           /* Safari, Android, iOS */
+	     url('Semplicita-Bold.svg#Semplicita-Bold') format('svg');                 /* Legacy iOS */
+	font-weight: bold;
+	font-style: normal;
+}
+@font-face {
+	font-family: 'Semplicita';
+	src: url('Semplicita-BoldItalic.eot');                                         /* IE9 Compat Modes */
+	src: url('Semplicita-BoldItalic.eot?#iefix') format('embedded-opentype'),      /* IE6-IE8 */
+	     url('Semplicita-BoldItalic.otf')  format('opentype'),
+	     url('Semplicita-BoldItalic.woff') format('woff'),                         /* Pretty Modern Browsers */
+	     url('Semplicita-BoldItalic.ttf')  format('truetype'),                     /* Safari, Android, iOS */
+	     url('Semplicita-BoldItalic.svg#Semplicita-BoldItalic') format('svg');     /* Legacy iOS */
+	font-weight: bold;
+	font-style: italic;
+}
+@font-face {
+	font-family: 'Semplicita';
+	src: url('Semplicita-Light.eot');                                              /* IE9 Compat Modes */
+	src: url('Semplicita-Light.eot?#iefix') format('embedded-opentype'),           /* IE6-IE8 */
+	     url('Semplicita-Light.otf')  format('opentype'),
+	     url('Semplicita-Light.woff') format('woff'),                              /* Pretty Modern Browsers */
+	     url('Semplicita-Light.ttf')  format('truetype'),                          /* Safari, Android, iOS */
+	     url('Semplicita-Light.svg#Semplicita-Light') format('svg');               /* Legacy iOS */
+	font-weight: light;
+	font-style: normal;
+}
+@font-face {
+	font-family: 'Semplicita';
+	src: url('Semplicita-LightItalic.eot');                                        /* IE9 Compat Modes */
+	src: url('Semplicita-LightItalic.eot?#iefix') format('embedded-opentype'),     /* IE6-IE8 */
+	     url('Semplicita-LightItalic.otf')  format('opentype'),
+	     url('Semplicita-LightItalic.woff') format('woff'),                        /* Pretty Modern Browsers */
+	     url('Semplicita-LightItalic.ttf')  format('truetype'),                    /* Safari, Android, iOS */
+	     url('Semplicita-LightItalic.svg#Semplicita-LightItalic') format('svg');   /* Legacy iOS */
+	font-weight: light;
+	font-style: italic;
+}

@@ -9,55 +9,59 @@
 	</head>
 	<body>
 		{% include "partials/navbar.html.twig" %}
-		<header id="HomeBanner">
-			<div class="container">
-				<h1>PUPC</h1>
-				<h2 class="hidden-xs">Princeton&nbsp;University Physics&nbsp;Competition</h2>
-				<h2 class="visible-xs hidden">Princeton University Physics Competition</h2>
-				<h3 class="hidden-xs">Online Exam: November 12&ndash;19, 2016<br />Onsite Exam: November 19, 2016</h3>
-				<h3 class="visible-xs hidden">Online Exam: Nov. 12&ndash;19, 2016<br />Onsite Exam: Nov. 19, 2016</h3>
-			</div>
-		</header>
-		
-		<!-- Beginning of content -->
-		<div id="HomeNews">
-			<div class="container">
-{% for flash in flashes %}
-				<div class="alert alert-{{ flash[0] }} fade in">
-					<a href="#" class="close" data-dismiss="alert">&times;</a>
-					{{ flash[1] | raw }}
-				</div>
-{% endfor %}
+		<div class="container">
+			<h1 class="col-sm-offset-1 col-sm-2">PUPC</h1>
+			<h1 class="col-sm-3">2016</h1>
+			<h2 class="serif">Princeton University Physics Competition</h2>
+		</div>
+		<div class="container">
+			<h3 class="hidden-xs">Online Exam: Nov. 12&ndash;19</h3>
+			<h3>Onsite Exam: Nov. 19</h3>
+		</div>
+		<div class="container">
+			<div class="col-sm-offset-3 col-sm-3">
+				<h3><a href="Register.php">Register</a> now!</h3>
 				<p>
-					Registration for PUPC 2016 is now open! Register <a href="Register.php">here</a>.
+					The Princeton University Physics Competition offers high school students
+					from around the globe the opportunity to exhibit their physical intuition
+					and mathematical prowess by solving challenging, out-of-the-box physics problems.
+					Content ranges from new formulations of classical physics to cutting-edge subjects
+					at the forefront of modern research. 
 				</p>
 			</div>
 		</div>
 		<div class="container">
-			<p>
-				The Princeton University Physics Competition offers high school students from around the globe the opportunity to exhibit their physical intuition and mathematical prowess by solving challenging, out-of-the-box physics problems. Content ranges from new formulations of classical physics to cutting-edge subjects at the forefront of modern research. We offer <a href="Onsite.php">onsite exams</a> in Princeton, as well as international chapters in China, Germany, and Slovakia. We also have an <a href="Online.php">online exam</a>, which students have a week to complete. <!--We are grateful to our many sources of <a href="#Sponsors">support</a>.-->
-			</p>
-		</div>
-		<div class="container" id="Sponsors">
-			<center><h2>Sponsors</h2></center>
-			<div class="row">
-				<div class="col-xs-offset-2 col-xs-8 col-sm-offset-0 col-sm-3">
-					<a href="https://www.janestreet.com"><img alt="Jane Street Capital" src="img/Jane_Street_thinner.png"></img></a>
-				</div>
-				<div class="col-xs-offset-2 col-xs-8 col-sm-offset-0 col-sm-3">
-					<a href="http://www.3redgroup.com"><img alt="3Red Trading" src="img/3red.jpeg"></img></a>
-				</div>
+			<div class="col-sm-offset-1 col-sm-2">
+				<p>
+					We offer <a href="Onsite.php">onsite exams</a> in Princeton,
+					as well as international chapters in China, Germany, and Slovakia.
+					We also have an <a href="Online.php">online exam</a>,
+					which students have a week to complete.
+					<!--We are grateful to our many sources of <a href="#Sponsors">support</a>.-->
+				</p>
 			</div>
 		</div>
-		<div class="container" id="Collaborators">
-			<center><h2>Collaborators</h2></center>
-			<div class="row">
-				<div class="col-xs-offset-2 col-xs-8 col-sm-offset-0 col-sm-3">
-					<a href="https://www.expii.com"><img alt="Expii" src="img/expii_logo.png"></img></a>
-				</div>
-			</div>
-		</div>
-
+		<div class="container">
+			<div class="col-sm-4" id="Sponsors">
+    			<h2>Sponsors</h2>
+    			<div class="row">
+    				<div class="col-xs-7 col-sm-2">
+    					<a href="https://www.janestreet.com"><img alt="Jane Street Capital" src="img/Jane_Street_thinner.png"></img></a>
+    				</div>
+    				<div class="col-xs-7 col-sm-2">
+    					<a href="http://www.3redgroup.com"><img alt="3Red Trading" src="img/3red.jpeg"></img></a>
+    				</div>
+    			</div>
+    		</div>
+    		<div class="col-sm-3" id="Collaborators">
+    			<center><h2>Collaborators</h2></center>
+    			<div class="row">
+    				<div class="col-xs-7 col-sm-2">
+    					<a href="https://www.expii.com"><img alt="Expii" src="img/expii_logo.png"></img></a>
+    				</div>
+    			</div>
+    		</div>
+    	</div>
 		<div class="container">
 			{% include "partials/footer.html.twig" %}
 		</div>
