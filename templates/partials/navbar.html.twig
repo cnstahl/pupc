@@ -39,14 +39,24 @@
 								<ul class="dropdown-menu">
 									<li><a href="/Onsite.php">Onsite Test</a></li>
 									<li><a href="/Online.php">Online Test</a></li>
+									<li><a href="/Schedule.php">Schedule</a></li>
+									<li><a href="/Archive.php">Archive</a></li>
 									<li role="separator" class="divider"></li>
 									<li><a href="/PhysiKarma.php">PhysiKarma</a></li>
 								</ul>
+							</li>
 {% if not admin %}
 							<li><a href="/Register.php">Register</a></li>
 {% endif %}
-							<li><a href="/Schedule.php">Schedule</a></li>
-							<li><a href="/Archive.php">Archive</a></li>
+							<li class="dropdown"><a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Global<span class="caret"></span></a>
+								<ul class="dropdown-menu">
+									<li><a href="/global/Princeton.php">Princeton</a></li>
+									<li><a href="/global/China.php">China</a></li>
+									<li><a href="/global/Germany.php">Germany</a></li>
+									<li><a href="/global/Slovakia.php">Slovakia</a></li>
+								</ul>
+							</li>
+
 							<li><a href="/Contact.php">Contact</a></li>
 							<li role="separator" class="nav-divider"></li>
 {% if not logged_in %}
