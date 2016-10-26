@@ -8,48 +8,54 @@
 						<span class="icon-bar"></span>
 					</button>
 					<a class="navbar-brand" href="/">
-						<img alt="PUPC" src="img/Princeton_shield.svg"></img>
+						<img alt="PUPC" src="/img/Princeton_shield.svg"></img>
 					</a>
 				</div>
 				<div class="container-fluid">
 					<div class="collapse navbar-collapse" id="navbar">
 {% if not logged_in %}
-						<form class="navbar-form navbar-right hidden-xs" role="form" action="PL_includes/login.php" method="post">
-							<div class="form-group input-group-sm">
-								<input type="text" class="form-control" name="email" placeholder="Email" />
-								<input type="password" class="form-control" name="password" placeholder="Password" />
-							</div>
-							<input type="hidden" name="page" value="{{ page }}" />
-							<button type="submit" name="submit" value="true" class="btn btn-default btn-sm">Log in</button>
-						</form>
+						<ul class="nav navbar-nav navbar-right">
+							<li class="navbar-right dropdown hidden-xs"><a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Log in<span class="caret"></span></a>
+								<ul class="dropdown-menu" style="width: 200px">
+									<form class="hidden-xs" role="form" action="PL_includes/login.php" method="post">
+										<div class="form-group input-group-sm">
+											<input type="text" class="form-control" name="email" placeholder="Email" />
+										</div><div class="form-group input-group-sm">
+											<input type="password" class="form-control" name="password" placeholder="Password" />
+										</div>
+										<input type="hidden" name="page" value="{{ page }}" />
+										<button type="submit" name="submit" value="true" class="btn btn-default btn-sm">Log in</button>
+									</form>
+								</ul>
+							</li>
+						</ul>
 {% else %}
 						<p class="navbar-text navbar-right hidden-xs">Signed in as {{ user_name }} (<a href="?logout=true">Logout</a>)</p>
 {% endif %}
 						<ul class="nav navbar-nav">
-							<li><a href="About.php">About</a></li>
+							<li><a href="/About.php">About</a></li>
 							<!--<li><a href="Rules.php">Rules</a></li>-->
 							<li class="dropdown"><a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Information<span class="caret"></span></a>
 								<ul class="dropdown-menu">
-									<li><a href="Onsite.php">Onsite Test</a></li>
-									<li><a href="Online.php">Online Test</a></li>
+									<li><a href="/Onsite.php">Onsite Test</a></li>
+									<li><a href="/Online.php">Online Test</a></li>
 									<li role="separator" class="divider"></li>
-									<li><a href="PhysiKarma.php">PhysiKarma</a></li>
+									<li><a href="/PhysiKarma.php">PhysiKarma</a></li>
 								</ul>
 {% if not admin %}
-							<li><a href="Register.php">Register</a></li>
+							<li><a href="/Register.php">Register</a></li>
 {% endif %}
-							<li><a href="Schedule.php">Schedule</a></li>
-							<li><a href="Archive.php">Archive</a></li>
-							<!--li><a href="Schedule.php">Schedule</a></li-->
-							<li><a href="Contact.php">Contact</a></li>
+							<li><a href="/Schedule.php">Schedule</a></li>
+							<li><a href="/Archive.php">Archive</a></li>
+							<li><a href="/Contact.php">Contact</a></li>
 							<li role="separator" class="nav-divider"></li>
 {% if not logged_in %}
 							<li class="hidden-sm hidden-md hidden-lg"><a href="Login.php">Log in</a></li>
 {% else %}
 							<li><a class="hidden-sm hidden-md hidden-lg">Signed in as {{ user_name }}</a></li>
-							<li><a href="Profile.php">Profile</a></li>
+							<li><a href="/Profile.php">Profile</a></li>
 {% if admin %}
-							<li><a href="Admin.php">Admin</a></li>
+							<li><a href="/Admin.php">Admin</a></li>
 {% endif %}
 							<li class="hidden-sm hidden-md hidden-lg"><a href="?logout=true">Logout</a></li>
 {% endif %}

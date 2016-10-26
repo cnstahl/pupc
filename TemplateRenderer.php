@@ -1,5 +1,5 @@
 <?php
-include("./PL_includes/functions.php");
+include($_SERVER['DOCUMENT_ROOT'] . "/PL_includes/functions.php");
 require_once 'Twig/Autoloader.php';
 Twig_Autoloader::register();
 
