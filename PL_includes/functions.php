@@ -14,6 +14,7 @@ $rand_salt = "AABcDdeFgHJkLmNnoPqQrrSssTtuVwxYz12334567889";
 $substr_salt = 6;
 $rand_gen = "AaBbCcDdEeFfGgHhIIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz";
 $substr_gen = 10;
+$year = 2016;
 
 
 /**********************************
@@ -345,6 +346,40 @@ function email_PUPC_team_confirmation($email, $team_name, $names, $year)
 	$headers .= "X-Mailer: PHP/" . phpversion() . "\n";
 	$headers .= "List-Unsubscribe: http://pupc.princeton.edu/?action=unsubscribe&email=$email";
 	mail($to, $subject, $message, $headers);
+}
+
+/**
+ * Returns whether the currently logged in user is registered for the upcoming PUPC.
+ */
+function registered_PUPC() {
+	global $mysql_con, $year;
+	if (!logged_in())
+		return FALSE;
+	$uid = get_uid();
+	$register_query = mysqli_query($mysql_con, "SELECT * FROM pupc_$year WHERE uid='$uid'");
+	return mysqli_num_rows($register_query) == TRUE;
+}
+
+/**
+ * Returns whether the currently logged in user is registered for the upcoming PUPC.
+ */
+function registered_PUPC_online() {
+	global $mysql_con, $year;
+	if (!logged_in())
+		return FALSE;
+	$uid = get_uid();
+	$register_query1 = mysqli_query($mysql_con, "SELECT * FROM pupc_online_$year WHERE uid1='$uid'");
+	$register_query2 = mysqli_query($mysql_con, "SELECT * FROM pupc_online_$year WHERE uid2='$uid'");
+	$register_query3 = mysqli_query($mysql_con, "SELECT * FROM pupc_online_$year WHERE uid3='$uid'");
+	$register_query4 = mysqli_query($mysql_con, "SELECT * FROM pupc_online_$year WHERE uid4='$uid'");
+	$register_query5 = mysqli_query($mysql_con, "SELECT * FROM pupc_online_$year WHERE uid5='$uid'");
+	$register_query6 = mysqli_query($mysql_con, "SELECT * FROM pupc_online_$year WHERE uid6='$uid'");
+	return mysqli_num_rows($register_query1) == TRUE
+	|| mysqli_num_rows($register_query2) == TRUE
+	|| mysqli_num_rows($register_query3) == TRUE
+	|| mysqli_num_rows($register_query4) == TRUE
+	|| mysqli_num_rows($register_query5) == TRUE
+	|| mysqli_num_rows($register_query6) == TRUE;
 }
 
 

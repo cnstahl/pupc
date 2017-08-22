@@ -13,6 +13,11 @@
 	display: block;
 	margin: auto;
 }
+img.opacity-filter-1 {
+	-webkit-filter: saturate(0) opacity(.1);
+	-moz-filter: saturate(0) opacity(.1);
+	filter: saturate(0) opacity(.1);
+}
 @media screen and (max-device-width: 767px) and (orientation:landscape) {
 	.hidden-xs-land { display: none !important }
 	.visible-xs-land { display: block !important }
