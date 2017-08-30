@@ -3,7 +3,7 @@ require_once $_SERVER['DOCUMENT_ROOT'].'/TemplateRenderer.php';
 $renderer = new TemplateRenderer();
 
 // PUPC year
-$year = 2016; // Be sure to make the database table before updating this value
+$year = 2017; // Be sure to make the database table before updating this value
 
 // Set registration variables
 $submit = safe($_POST["submit"], 'sql');
