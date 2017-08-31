@@ -23,14 +23,6 @@
 	        Use this form to register for the onsite exam at Princeton. Information for the online exam and other locations will become available in early September. 
 	</p>
 	<form role="form" action="" method="post" class="form-horizontal">
-		<div class="form-group">
-			<label for="format" class="col-xs-7 col-sm-1 control-label">Format:</label>
-			<div class="col-sm-6">
-	    		<select class="form-control" name="format">
-					<option value="false">Onsite individual event</option>
-				</select>
-			</div>
-		</div>
 		<div id="IndividualFields" class="collapse in">
 			<div class="form-group">
 				<label for="site" class="col-xs-7 col-sm-1 control-label">Competition site:</label>
@@ -44,11 +36,12 @@
 			<div class="form-group">
 				<label for="aid" class="col-xs-7 col-sm-1 control-label">Financial aid:</label>
 				<div class="col-sm-6">
-		    		<select class="form-control" name="aid">
+		    		        <select class="form-control" name="aid">
 						<option value="true">Yes, I need financial aid.</option>
 						<option value="false" selected>No, I do not need financial aid.</option>
 					</select>
-					<span id="AidHelp" class="form-text text-muted collapse">Please briefly explain why you require aid in the notes section below.</span>
+					<span id="AidHelp" class="form-text text-muted collapse">Please briefly explain why you require aid in the notes section below.
+					</span>
 				</div>
 			</div>
 			<div class="form-group">
