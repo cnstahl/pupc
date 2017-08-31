@@ -21,7 +21,7 @@ if ($submit) { // Submitted account registration
 	if (count($name) > 0 && count($surname) > 0)
 		// Verify that the registration form was submitted and that the email & password are correct
 		if (valid_registration($password, $repassword, $email) && register($password, $email, $name, $surname, $role))
-			$register_result = create_alert("Account created successfully! Verification email sent to $email.", "info");
+			$register_result = create_alert("Account created successfully! Verification email sent to $email. Remember to still register for the onsite test!", "info");
 		else
 			$register_result = create_alert(registration_error($password, $repassword, $email), "danger");
 	else
