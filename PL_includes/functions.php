@@ -14,7 +14,7 @@ $rand_salt = "AABcDdeFgHJkLmNnoPqQrrSssTtuVwxYz12334567889";
 $substr_salt = 6;
 $rand_gen = "AaBbCcDdEeFfGgHhIIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz";
 $substr_gen = 10;
-$year = 2016;
+$year = 2017;
 
 
 /**********************************
