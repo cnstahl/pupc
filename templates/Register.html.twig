@@ -5,56 +5,10 @@
 {% block image %}{{ parent() }}{% endblock %}
 {% block body %}
 	{{ parent() }}
-	<script>$(document).ready(function() {$('[data-toggle="popover"]').popover()});</script>
-	<script>$(document).ready(function() {$('*[name="format"]').change(function() {$('#FormatToggle').click()})});</script>
-	<script>$(document).ready(function() {$('*[name="aid"]').change(function() {$('#AidToggle').click()})});</script>
-	<script>
-		$(document).ready(function() {$('*[name="site"]').change(function() {
-			if ($(this).val() == 'Princeton')
-				$('#FeeTextToggle').click();
-			else if ($('#FeeHelp').hasClass('in'))
-				$('#FeeTextToggle').click()
-		})});
-	</script>
-	<span id="FormatToggle" class="hidden" data-toggle="collapse" data-target="#IndividualFields,#TeamFields">Toggle</span>
-	<span id="AidToggle" class="hidden" data-toggle="collapse" data-target="#AidHelp">Toggle</span>
 	<span id="FeeTextToggle" class="hidden" data-toggle="collapse" data-target="#FeeHelp">Toggle</span>
 	<p> 
-	        Use this form to register for the onsite exam at Princeton. Information for the online exam and other locations will 
-		become available in early September. <br>There is a $10 fee for the onsite event in Princeton. 
-		Payments by cash or check (to &ldquo;Princeton Society of Physics Students&rdquo;) will be 
-		accepted during competition check-in. Please indicate below if you need the fee waived. <br>
-		The official registration deadline has passed. However, anyone who still wants to sign up is welcome to. You will have a spot at the competition, but you will not be guaranteed food or a competition t-shirt.
-	</p>
-	<form role="form" action="" method="post" class="form-horizontal">
-		<div id="IndividualFields" class="collapse in">
-			<div class="form-group">
-				<label for="site" class="col-xs-7 col-sm-1 control-label">Competition site:</label>
-				<div class="col-sm-6">
-		    		
-				     <p><br>Princeton University, Princeton, USA</p>
-				
-				</div>
-			</div>
-			<div class="form-group">
-				<label for="aid" class="col-xs-7 col-sm-1 control-label">Fee Waiver:</label>
-				<div class="col-sm-6">
-		    		        <select class="form-control" name="aid">
-						<option value="true">Yes, I need a fee waiver.</option>
-						<option value="false" selected>No, I do not need a fee waiver.</option>
-					</select>
-					<span id="AidHelp" class="form-text text-muted collapse">Please briefly explain why you require aid in the notes section below.
-					</span>
-				</div>
-			</div>
-			<div class="form-group">
-				<label for="note" class="col-sm-1 control-label">Notes or requests:</label>
-				<div class="col-sm-6">
-					<input type="text" class="form-control" name="note" placeholder=""></input>
-				</div>
-			</div>
-		</div>
-		<button type="submit" name="submit" value="true" class="btn btn-default">Register</button>
-	</form>
+	        Registration for PUPC 2017 is now closed. Good luck to this year's competitors! <br>
 
+		Check back in September 2018 for information on the 2018 competition.
+	</p>
 {% endblock body %}
